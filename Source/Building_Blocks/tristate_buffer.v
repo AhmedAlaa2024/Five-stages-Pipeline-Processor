@@ -1,4 +1,4 @@
-module #(parameter N = 1) (data_in, enable, data_out);
+module tristate_buffer #(parameter N = 1) (data_in, enable, data_out);
 
 /*********** Inputs ***********/
 input [N-1:0] data_in;
