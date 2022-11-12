@@ -1,0 +1,29 @@
+[inst] F D E M W
+[inst]   F D E M W
+[intr]     F D E M W
+[cont]       F D E M W
+[cont]         F D E M W
+[cont]           F D E M W
+[cont]             F D E M W
+[cont]               F D E M W
+
+0 ->[INT] 1 -> [IR14] 0
+
+0 -> IMEM
+1 -> ROM
+
+MEM[MAIN] -> INT0 -> MEM[INT0] -> INT1 -> MEM[INT1] -> MEM[INT0] -> MEM[MAIN]
+IMEM      -> ROM  -> IMEM      -> ROM  -> IMEM      -> ROM       -> IMEM
+
+IR0: PUSH R0
+.
+.
+.
+IR13: PUSH PC
+IR14: LDM R0, [INT0]
+IR15: CALL R0
+
+UPC = 00 -> Context In  (INT0)
+	32 -> Context Out (INT0)
+00 [IR0 IR1 IR2 IR3 ... IR13] [IR14 IR15]
+32 [IR0 IR1 IR2 IR3 ... IR13] [IR14 IR15]
