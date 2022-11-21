@@ -1,6 +1,4 @@
 
- `timescale 1ns / 1ps  
-
 module ALU_tb();
 
  reg[15:0] op1,op2;
@@ -40,12 +38,43 @@ initial begin
     inputTests1[4] = 16'b0000_0000_0000_0011;
     inputTests2[4] = 16'b0000_0000_0000_0001;
     funcTests[4] = 4'b1101;                     // SHR
-    resultTests[4] = 16'b0000_0000_0000_0001;      
+    resultTests[4] = 16'b0000_0000_0000_0001;
+
+    inputTests1[5] = 16'b0111_1111_1111_1111;
+    inputTests2[5] = 16'b0000_0000_0000_0001;
+    funcTests[5] = 4'b0110;                     // INC
+    resultTests[5] = 16'b1000_0000_0000_0000;   // overflow bit is should be one
+
+    inputTests1[6] = 16'b0000_0000_0000_0000;
+    inputTests2[6] = 16'b0000_0000_0000_0001;
+    funcTests[6] = 4'b0111;                     // DEC
+    resultTests[6] = 16'b1111_1111_1111_1111;   // overflow bit is should be one
+
+
+    inputTests1[7] = 16'b0000_0000_0000_0000;
+    inputTests2[7] = 16'b0000_0000_0000_0001;
+    funcTests[7] = 4'b0000;                     // NOP
+    resultTests[7] = 16'b0000_0000_0000_0000;   // flags should not change
+
+    inputTests1[8] = 16'b0000_0000_1111_0000;
+    inputTests2[8] = 16'b0000_0000_0000_0001;
+    funcTests[8] = 4'b0011;                     // Mov operand 1
+    resultTests[8] = 16'b0000_0000_1111_0000;   // flags should not change
+
+    inputTests1[9] = 16'b0000_0000_0000_0000;
+    inputTests2[9] = 16'b0000_1111_0000_1111;
+    funcTests[9] = 4'b0100;                     // Mov operand 2
+    resultTests[9] = 16'b0000_1111_0000_1111;   // flags should not change
+
+    inputTests1[10] = 16'b0000_0000_1111_0000;
+    inputTests2[10] = 16'b0000_1111_0000_1111;
+    funcTests[10] = 4'b0101;                     // Not
+    resultTests[10] = 16'b1111_1111_0000_1111;   // flags should not change
     // op1 = 16'b0000_0000_0000_0001;
     // op2 = 116'b0000_0000_0000_0001;
     // func = 4'b0111; 
     // #10;
-    for (i=0;i<=4;i=i+1)
+    for (i=0;i<=10;i=i+1)
     begin
         op1 = inputTests1[i];
         op2 = inputTests2[i];
