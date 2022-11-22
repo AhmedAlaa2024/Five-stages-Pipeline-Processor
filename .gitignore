@@ -19,6 +19,7 @@ bin-release/
 
 # Modelsim directories and files
 work
+*/work
 */*.vsim
 */*.wav
 *.mti
