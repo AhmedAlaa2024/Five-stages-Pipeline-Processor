@@ -13,7 +13,7 @@ always @ (posedge clk)
         begin
             for (i=0; i<(2 ** ADDRESS_SPACE) ; i=i+1)
                 cache[i] = 0;
-            MDR_reg[i] = 'bz;
+            MDR_reg = 'bz;
         end
     else
         begin
@@ -29,7 +29,7 @@ always @ (posedge clk)
                         end
                 end
             else
-                MDR_reg[i] = 'bz;
+                MDR_reg = 'bz;
         end
 
 endmodule
