@@ -17,18 +17,18 @@ module CU_tb;
 	parameter NOP = 2'b00;
 
 	reg [8:0] opcode;
-	wire dmr;
-	wire dmw;
+	wire mem_en;
+	wire rw;
 	wire data_read;
 	wire data_write;
 	wire [2:0] alu_function;
 	
-	CU cu(opcode,dmr,dmw,data_read,data_write,alu_function);
+	CU cu(opcode,mem_en,rw,data_read,data_write,alu_function);
 	initial begin
 		// Test load
 		opcode = LOAD_OP;
 		#10;
-		if(dmr == 1 && dmw==0 && data_read ==0 && data_write == 1 && alu_function == LOAD) begin
+		if(mem_en == 1 && rw == 1 && data_read ==0 && data_write == 1 && alu_function == LOAD) begin
 			$display("PASS LOAD");	
 		end else begin
 			$display("FAILED LOAD");	
@@ -37,7 +37,7 @@ module CU_tb;
 		// Test store
 		opcode = STORE_OP;
 		#10;
-		if(dmr == 0 && dmw == 1 && data_read == 1 && data_write == 0 && alu_function == STORE) begin
+		if(mem_en == 1 && rw == 0 && data_read == 1 && data_write == 0 && alu_function == STORE) begin
 			$display("PASS STORE");	
 		end else begin
 			$display("FAILED STORE");	
@@ -46,7 +46,7 @@ module CU_tb;
 		// Test add
 		opcode = ADD_OP;
 		#10;
-		if(dmr == 0 && dmw== 0 && data_read == 1 && data_write == 1 && alu_function == ADD) begin
+		if(mem_en == 0 && data_read == 1 && data_write == 1 && alu_function == ADD) begin
 			$display("PASS ADD");	
 		end else begin
 			$display("FAILED ADD");	
@@ -55,7 +55,7 @@ module CU_tb;
 		// Test not
 		opcode = NOT_OP;
 		#10;
-		if(dmr == 0 && dmw== 0 && data_read == 1 && data_write == 1 && alu_function == NOT) begin
+		if(mem_en == 0  && data_read == 1 && data_write == 1 && alu_function == NOT) begin
 			$display("PASS NOT");	
 		end else begin
 			$display("FAILED NOT");	
@@ -64,7 +64,7 @@ module CU_tb;
 		// Test nop
 		opcode = NOP_OP;
 		#10;
-		if(dmr == 0 && dmw== 0 && data_read == 0 && data_write == 0 && alu_function == NOP) begin
+		if(mem_en == 0 && data_read == 0 && data_write == 0 && alu_function == NOP) begin
 			$display("PASS NOP");	
 		end else begin
 			$display("FAILED NOP");	
