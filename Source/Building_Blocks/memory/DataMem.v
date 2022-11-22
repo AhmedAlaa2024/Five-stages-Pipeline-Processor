@@ -2,15 +2,18 @@ module  InstrMem #(parameter WORD_LENGTH=16, parameter ADDRESS_SPACE=12) (clk, M
 input [ADDRESS_SPACE-1:0] MAR;
 input reset, clk, mem, rw, en;
 inout [WORD_LENGTH-1:0]   MDR;
-
+reg [WORD_LENGTH-1:0]   MDR_reg;
 reg [WORD_LENGTH-1:0] cache [((2 ** ADDRESS_SPACE)-1):0];
 
 /* Note: reset is an active low signal */
+assign MDR=MDR_reg;
+integer i;
 always @ (posedge clk)
     if (!reset)
         begin
-            cache = 0;
-            MDR = 'bz;
+            for (i=0; i<(2 ** ADDRESS_SPACE) ; i=i+1)
+                cache[i] = 0;
+            MDR_reg[i] = 'bz;
         end
     else
         begin
@@ -18,7 +21,7 @@ always @ (posedge clk)
                 begin
                     if (rw)
                         begin
-                            MDR = cache[MAR];
+                            MDR_reg = cache[MAR];
                         end
                     else
                         begin
@@ -26,7 +29,7 @@ always @ (posedge clk)
                         end
                 end
             else
-                MDR = 'bz;
+                MDR_reg[i] = 'bz;
         end
 
 endmodule
