@@ -4,7 +4,7 @@ module PC(write_enable, clk, rst, in, out);
 	input [31:0] in;
 	output reg [31:0] out;
 
-	always @(posedge clk or posedge rst) begin
+	always @(posedge clk) begin
 		if (rst == 0) out = 2**5;
 		else begin
 			if(write_enable)
