@@ -30,6 +30,8 @@ ALU_1 ALU(operand1, operand2, alu_function, result, outFlags);
 
 DataMem  #(16, 12)  DM(clk, operand1[11:0], result,MDR_out, reset, mem_en, rw);
 
+Incrementor  #(32) PC_INC(PC_out,PC_in);
+
 // Mux for MDR_out || result
 mux #(16) MUX1 (result,MDR_out, write_data, M2R);
 
