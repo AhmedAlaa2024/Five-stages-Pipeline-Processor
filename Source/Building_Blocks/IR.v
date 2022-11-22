@@ -5,7 +5,7 @@ module IR(write_enable, clk, rst, in, out);
 	output reg [15:0] out;
 
 	always @(posedge clk or posedge rst) begin
-		if (rst == 1) out = 0;
+		if (rst == 0) out = 0;
 		else begin
 			if(write_enable)
 				out = in;

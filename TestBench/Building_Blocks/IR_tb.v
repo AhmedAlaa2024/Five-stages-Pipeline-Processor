@@ -8,7 +8,7 @@ module IR_tb;
 
 	initial begin
 		clk = 0;
-		rst = 0;
+		rst = 1;
 		write_enable = 0;
 		in = 0;	
 	end
@@ -18,7 +18,7 @@ module IR_tb;
 	initial begin
 		
 		// test reset without write enable
-		rst = 1;
+		rst = 0;
 		write_enable = 0;
 		in = 1234;	
 		#10;
@@ -29,7 +29,7 @@ module IR_tb;
 		end
 	
 		// test reset with write enable
-		rst = 1;
+		rst = 0;
 		write_enable = 1;
 		in = 1234;	
 		#10;
@@ -40,7 +40,7 @@ module IR_tb;
 		end
 
 		// test write
-		rst = 0;
+		rst = 1;
 		write_enable = 1;
 		in = 1234;	
 		#10;
@@ -51,7 +51,7 @@ module IR_tb;
 		end
 
 		// test write
-		rst = 0;
+		rst = 1;
 		write_enable = 1;
 		in = 9999_9999;	
 		#10;
@@ -62,7 +62,7 @@ module IR_tb;
 		end
 
 		// test write
-		rst = 0;
+		rst = 1;
 		write_enable = 1;
 		in = 1234_9876;
 		#10;
