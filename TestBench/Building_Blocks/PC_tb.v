@@ -10,7 +10,7 @@ module PC_tb;
 		clk = 0;
 		rst = 1;
 		write_enable = 0;
-		in = 0;	
+		in = 2**5;	
 	end
 	
 	always #PERIOD clk=~clk;
@@ -22,7 +22,7 @@ module PC_tb;
 		write_enable = 0;
 		in = 1234;	
 		#10;
-		if (out == 0)begin
+		if (out == 2**5)begin
 			$display("PASS test reset with write enable out = %d",out);	
 		end else begin
 			$display("Failed test reset with write enable out = %d",out);	
@@ -33,7 +33,7 @@ module PC_tb;
 		write_enable = 1;
 		in = 1234;	
 		#10;
-		if (out == 0)begin
+		if (out == 2**5)begin
 			$display("PASS test reset with write enable out = %d",out);	
 		end else begin
 			$display("Failed test reset with write enable out = %d",out);	
