@@ -53,25 +53,6 @@ module CU(opcode,dmr,dmw,data_read,data_write,alu_function);
 				alu_function = NOP;
 			end
 		endcase
-//		if(ir[15:4] == LOAD_OP)begin 
-//			dmr = 1;
-//			data_write = 1;
-//		end else if(ir[15:4] == STORE_OP)begin 
-//			dmw = 1;
-//			data_read = 1;
-//		end else if(ir[15:4] == ADD_OP)begin 
-//			data_read = 1;
-//			data_write = 1;
-//			alu_function = ADD;
-//		end else if(ir[15:4] == NOT_OP)begin 
-//			data_read = 1;
-//			data_write = 1;
-//			alu_function = NOT;
-//		end else if(ir[15:4] == NOP_OP)begin 
-//			data_read = 1;
-//			data_write = 1;
-//			alu_function = NOP;
-//		end 
 	end		
 
 endmodule
