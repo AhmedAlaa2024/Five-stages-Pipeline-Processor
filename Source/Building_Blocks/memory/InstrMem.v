@@ -1,5 +1,6 @@
 module  InstrMem #(parameter WORD_LENGTH=16,parameter ADDRESS_SPACE=21) (clk, MAR, MDR, reset, en);
 input  [ADDRESS_SPACE-1:0] MAR;
+input clk, reset, enable;
 output [WORD_LENGTH-1:0]   MDR;
 
 reg [WORD_LENGTH-1:0] cache [((2 ** ADDRESS_SPACE)-1):0];
