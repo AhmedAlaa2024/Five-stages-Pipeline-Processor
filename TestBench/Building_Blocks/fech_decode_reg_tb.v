@@ -11,14 +11,14 @@ reg reset;
 fech_decode_reg #(N) FDTB(.IR_in(in),.write_en(write_en),.IR_out(out),.clk(clck),.reset(reset));
 
 initial begin
-write_en=1;
+write_en=0;
 reset=1;
 clck=0;
 in=0;
 
 #T
 in=10;
-write_en=0;
+write_en=1;
 reset=0;
 #T
 if(out == (2 ** 5))
@@ -27,15 +27,6 @@ else
 		$display("failed output for this test case");
 // ////////////////
 in =10;
-write_en=0;
-reset=1;
-#T
-if(out == 10)
-		$display("passed output for this test case");
-else 
-		$display("failed output for this test case");
-// ////////////////
-in =100;
 write_en=1;
 reset=1;
 #T
@@ -46,6 +37,15 @@ else
 // ////////////////
 in =100;
 write_en=0;
+reset=1;
+#T
+if(out == 10)
+		$display("passed output for this test case");
+else 
+		$display("failed output for this test case");
+// ////////////////
+in =100;
+write_en=1;
 reset=1;
 #T
 if(out == 100)
@@ -55,7 +55,7 @@ else
 
 // ////////////////
 in =100;
-write_en=0;
+write_en=1;
 reset=0;
 #T
 if(out == (2 ** 5))

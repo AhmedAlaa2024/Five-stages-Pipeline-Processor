@@ -1,12 +1,15 @@
-module  InstrMem #(parameter WORD_LENGTH=16, parameter ADDRESS_SPACE=12) (clk, MAR, MDR, reset, mem, rw, en);
+module  DataMem #(parameter WORD_LENGTH=16, parameter ADDRESS_SPACE=12) (clk, MAR, MDR_in,MDR_out, reset, mem, rw);
 input [ADDRESS_SPACE-1:0] MAR;
-input reset, clk, mem, rw, en;
-inout [WORD_LENGTH-1:0]   MDR;
+input reset, clk, mem, rw;
+
+input [WORD_LENGTH-1:0]   MDR_in;
+output [WORD_LENGTH-1:0]   MDR_out;
+
 reg [WORD_LENGTH-1:0]   MDR_reg;
 reg [WORD_LENGTH-1:0] cache [((2 ** ADDRESS_SPACE)-1):0];
 
 /* Note: reset is an active low signal */
-assign MDR=MDR_reg;
+assign MDR_out=MDR_reg;
 integer i;
 always @ (posedge clk)
     if (!reset)
@@ -17,15 +20,17 @@ always @ (posedge clk)
         end
     else
         begin
-            if (mem && en)
+            if (mem)
+            // neable the memory
                 begin
                     if (rw)
+                     // enable reade in the memory
                         begin
                             MDR_reg = cache[MAR];
                         end
                     else
                         begin
-                            cache[MAR] = MDR;
+                            cache[MAR] = MDR_in;
                         end
                 end
             else

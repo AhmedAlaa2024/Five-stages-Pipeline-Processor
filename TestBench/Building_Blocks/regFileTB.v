@@ -14,14 +14,14 @@ regFile #(N,8) rf1(.write_enable(write_en),
 initial begin
     clk=0;
     reset=1;
-    write_en=1;
+    write_en=0;
     read_ad1=0;
     read_ad2=0;
     write_ad=0;
     write_da=0;
     #T
     reset=0;
-    write_en=0;
+    write_en=1;
     write_da=100;
     read_ad1=1;
     read_ad2=2;
@@ -34,7 +34,7 @@ initial begin
             $display("failed output for this test case");
     //////////////////////////////////////////////
     reset=1;
-    write_en=0;
+    write_en=1;
     write_da=100;
     read_ad1=1;
     read_ad2=1;
@@ -47,7 +47,7 @@ initial begin
             $display("failed output for this test case");
     //////////////////////////////////////////////
     reset=1;
-    write_en=0;
+    write_en=1;
     write_da=150;
     read_ad1=1;
     read_ad2=2;
@@ -60,7 +60,7 @@ initial begin
             $display("failed output for this test case");
     //////////////////////////////////////////////
     reset=1;
-    write_en=0;
+    write_en=1;
     write_da=500;
     read_ad1=1;
     read_ad2=7;
@@ -74,7 +74,7 @@ initial begin
 
     //////////////////////////////////////////////
     reset=1;
-    write_en=0;
+    write_en=1;
     write_da=50;
     read_ad1=0;
     read_ad2=2;
@@ -88,7 +88,7 @@ initial begin
 
     //////////////////////////////////////////////
     reset=0;
-    write_en=0;
+    write_en=1;
     write_da=100;
     read_ad1=0;
     read_ad2=1;
@@ -104,3 +104,4 @@ $finish;
 end
 always #(T/2) clk=~clk;
 endmodule
+
