@@ -7,3 +7,6 @@ add wave -position end sim:/Processor_tb/processor/*
 mem load -i {D:/Material/3rd CMP/First term/Computer arch/Project/processor_testbench/memory_test.mem} /Processor_tb/processor/InstrCache/cache
 
 run
+
+mem save -o data.mem -f mti -data unsigned -addr decimal -wordsperline 1 /Processor_tb/processor/DM/cache
+mem save -o regFile.mem -f mti -data unsigned -addr decimal -wordsperline 1 /Processor_tb/processor/registers/general_regester
