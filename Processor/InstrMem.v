@@ -10,13 +10,10 @@ integer i;
 always @ (posedge clk)
     if (!reset)
         begin
-            for (i=0; i<(2 ** ADDRESS_SPACE) ; i=i+1)
-                cache[i] = 0;
             MDR = 'bz;
         end
     else
         begin
-
             MDR = cache[MAR];
 
         end

@@ -21,8 +21,10 @@ always @ (posedge clk)
     else
         begin
             if (mem)
+            // neable the memory
                 begin
                     if (rw)
+                     // enable reade in the memory
                         begin
                             MDR_reg = cache[MAR];
                         end
