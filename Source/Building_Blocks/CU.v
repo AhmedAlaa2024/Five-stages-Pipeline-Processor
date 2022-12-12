@@ -1,5 +1,5 @@
 
-module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,alu_function);
+module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function);
 	//********* Start Opcodes of instructions ***********//
 	parameter NOP_OP = 9'b0;
 	parameter SETC_OP = 9'b1;
@@ -78,6 +78,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	output reg stack_operation;
 	output reg push_pop;
 	output reg pass_immediate;
+	output reg write_sp;
 	output reg [3:0] alu_function;
 	
 	always @(*) begin
@@ -93,7 +94,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	 	stack_operation = 0;
 	 	push_pop = 0;
 		pass_immediate = 0;
-
+		write_sp = 0;
 	 	alu_function = 0;
 		case(opcode)
 			NOP_OP: begin
@@ -173,12 +174,14 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 				DMW = 1;
 				stack_operation = 1;
 				push_pop = 1;
+				write_sp = 1;
 			end
 			POP_OP: begin
 				alu_function = POP_ALU;
 				data_write = 1;
 				DMR = 1;
 				stack_operation = 1;
+				write_sp = 1;
 			end 
  			LDM_OP: begin
 				alu_function = LDM_ALU;
