@@ -1,4 +1,4 @@
-module DE_pipeline_register #(NUMBER_CONTROL_SIGNALS = 7) (control_sinals_IN, control_sinals_OUT,
+module DE_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 7) (control_sinals_IN, control_sinals_OUT,
                              result_IN, result_OUT,
                              address_IN, address_OUT,
                              reg_dst_num_IN, reg_dst_num_OUT,
