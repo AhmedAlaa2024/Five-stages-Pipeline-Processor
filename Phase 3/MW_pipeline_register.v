@@ -1,4 +1,4 @@
-module MW_pipeline_register #(NUMBER_CONTROL_SIGNALS = 5) (control_sinals_IN, control_sinals_OUT,
+module MW_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 5) (control_sinals_IN, control_sinals_OUT,
                              result_IN, result_OUT,
                              reg_dst_num_IN, reg_dst_num_OUT,
                              reg_dst_value_IN, reg_dst_value_OUT,
