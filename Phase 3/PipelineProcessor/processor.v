@@ -6,12 +6,12 @@ input clk,reset;
 
 
 // wires
-wire write_enable,mem_en,rw,M2R,data_read,data_write;
+wire write_enable,mem_en,rw,M2R;
 wire [31:0] PC_in,PC_out;
-wire [15:0] IR_in,IR_out,MDR_out,write_data,operand1,operand2,result;
+wire [15:0] IR_in,IR_out,write_data,result;
 wire [8:0] opcode;
-wire [3:0] Rsrc,Rdst;
 wire [4:0] outFlags;
+
 //------------------------------------- Control Unit Signals
 wire branch;
 wire data_read;
@@ -45,6 +45,17 @@ wire [15:0] address_IN;
 wire [15:0] address_OUT;
 
 
+wire Data_write1,sp_write,clk,rst;
+wire [2:0] Opd2_Add;
+wire [3:0] Opd1_Add,write_addr1;
+wire [15:0] write_data1;
+wire [31:0] write_sp_data,write_pc_data;
+wire [4:0]  write_ccr;
+
+wire [15:0] Src1,Src2;
+wire [31:0] read_sp,read_pc;
+wire [4:0] read_ccr;
+
 //------------------------------------- EM Pipeline Signals
 wire [6:0] control_signals_IN_Data;
 wire [6:0] control_signals_OUT_Data;
@@ -59,9 +70,12 @@ wire [3:0] reg_dst_value_OUT_Data;
 wire [31:0] sp_Reg_IN_Data;
 wire [31:0] sp_Reg_OUT_Data;
 
+
+
+
 //---------------------------------- MW Pipeline signals
-wire [4:0] control_sinals_IN_WB;
-wire [4:0] control_sinals_OUT_WB;
+wire [4:0] control_signals_IN_WB;
+wire [4:0] control_signals_OUT_WB;
 wire [15:0] result_IN_WB;
 wire [15:0] result_OUT_WB;
 wire [2:0] reg_dst_num_IN_WB;
@@ -72,10 +86,23 @@ wire [31:0] sp_Reg_IN_WB;
 wire [31:0] sp_Reg_OUT_WB;
 
 
+wire memory_enable;
+wire [15:0] MDR_out;
+
+//---------------------------------- WF Pipeline signals
+
+wire [15:0] write_back_output;
+wire write_back_enable;
+
+
+
+
 //----------------------------------------  Fetch Stage --------------------------------------------------
 // PC PC_reg (write_enable, clk, reset, PC_in, PC_out);
 
 InstrMem #(16, 21) InstrCache (clk, PC_in[20:0], IR_in, reset);
+
+Incrementor  #(32) PC_INC(PC_out,PC_in);
 
 FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset);
 
@@ -85,55 +112,100 @@ FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset);
                     Integrate Control Unit with Pipeline Register Conflict
                     Integrate IR with Register file Conflict
 */
+
 assign opcode[8:0] = IR_out[15:7];
 CU  ControlUnit (opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function);
 
 //CU ControlUnit (opcode, mem_en, rw, data_read, data_write, alu_function);
+/*
+        write_sp_data -> write data of SP
+        read_ccr -> input flags of ALU
+        read_pc -> output PC
+        read_sp -> output SP
+        write_pc_data -> write back of pc value of adder "PC_out"or branch
+        write_data1 -> write back of register
+        write_addr1 -> write back address
+*/
 
-// regFile registers (data_read, data_write, operand1, operand2, write_data, 1'b0, clk, reset, Rsrc, Rdst, Rdst);
+assign Opd1_Add =  IR_out[3:0];    // destination
+assign Opd2_Add =  IR_out[6:4];    // source
+assign address_IN = IR_in;
+
+
+regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(write_sp),
+     .Src1(Src1),.Src2(Src2),.read_sp(read_sp),.read_pc(PC_in),.read_ccr(read_ccr),
+     .write_sp_data(write_sp_data) , .write_pc_data(PC_out) , .write_ccr(write_ccr),.write_data1(write_back_output),
+      .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(write_addr1));
 
 assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
 
-DE_pipeline_register #(16) DE_pipe (control_signals_IN, control_signals_OUT, 
-                             reg_dst_num_IN, reg_dst_num_OUT,
-                             reg_dst_value_IN, reg_dst_value_OUT,
-                             reg_src_1_num_IN, reg_src_1_num_OUT,
-                             reg_src_1_value_IN, reg_src_1_value_OUT,
-                             reg_src_2_num_IN, reg_src_2_num_OUT,
-                             reg_src_2_value_IN, reg_src_2_value_OUT,
-                             address_IN, address_OUT,
-                             clk, reset);
+/*
+                Src1 -> is Destination which is operand2 in alu
+                Src2 -> is Source which is operand1 in alu   
+*/
+
+DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .control_sinals_OUT(control_signals_OUT), 
+                             .reg_dst_num_IN(Opd1_Add), .reg_dst_num_OUT(reg_dst_num_OUT),
+                             .reg_dst_value_IN(Src1), .reg_dst_value_OUT(reg_dst_value_OUT),
+                             .reg_src_1_num_IN(Opd2_Add), .reg_src_1_num_OUT(reg_src_1_num_OUT),
+                             .reg_src_1_value_IN(Src2), .reg_src_1_value_OUT(reg_src_1_value_OUT),
+                             .reg_src_2_num_IN(Opd1_Add), .reg_src_2_num_OUT(reg_src_2_num_OUT),
+                             .reg_src_2_value_IN(Src1), .reg_src_2_value_OUT(reg_src_2_value_OUT),
+                             .address_IN(address_IN), .address_OUT(address_OUT),
+                             .clk(clk), .reset(reset));
 
 //----------------------------------------  Execution Stage --------------------------------------------
-ALU alu( .operand1(reg_src_1_value_OUT), .operand2(reg_src_2_value_OUT), .alu_function(control_signals_OUT[3:0]), .result(result), .outFlags(outFlags) );
 
+/*
+                MUX for output of pipeline register and imediate value  in operand2 which is destination
+                address_OUT or reg_src_2_value_OUT -> MUX
+*/
+ALU alu( .operand1(reg_src_1_value_OUT), .operand2(reg_src_2_value_OUT), .alu_function(control_signals_OUT[3:0]), .result(result), .outFlags(write_ccr) );
 
-assign control_signals_IN_Data = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
+/*
+                Missing SP data value in DE stage so that can be propagated to EM stage
+*/
 
-EM_pipeline_register #(16) EM_pipe (control_signals_IN_Data, control_signals_OUT_Data,
-                             result, result_OUT_Data,
-                             address_IN_Data, address_OUT_Data,
-                             reg_dst_num_IN_Data, reg_dst_num_OUT_Data,
-                             reg_dst_value_IN_Data, reg_dst_value_OUT_Data,
-                             sp_Reg_IN_Data, sp_Reg_OUT_Data,
-                             clk, reset);
+/*
+                SP Adder circuit in Execution stage according to push_pop signal
+                MUX for ALU Result and SP for MAR               
+*/
+EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .control_sinals_OUT(control_signals_OUT_Data),
+                             .result_IN(result), .result_OUT(result_OUT_Data),
+                             .address_IN(address_OUT), .address_OUT(address_OUT_Data),
+                             .reg_dst_num_IN(reg_dst_num_OUT), .reg_dst_num_OUT(reg_dst_num_OUT_Data),
+                             .reg_dst_value_IN(reg_dst_value_OUT), .reg_dst_value_OUT(reg_dst_value_OUT_Data),
+                             .sp_Reg_IN(sp_Reg_IN_Data), .sp_Reg_OUT(sp_Reg_OUT_Data),
+                             .clk(clk), .reset(reset));
+
 
 //----------------------------------------  Memory Stage --------------------------------------------
+// DataMem  #(16, 12)  DM(.clk, operand1[11:0], result,MDR_out, reset, mem_en, rw);
 
-DataMem  #(16, 12)  DM(clk, operand1[11:0], result,MDR_out, reset, mem_en, rw);
+/*
+                MDR out result -> should be send to write back and be write back of register
+                need mux for MDR out and ALU output result in  Write Back stage
+                memory enable is oring push_pop signale and DMR and DMW
+*/
+
+assign memory_enable = control_signals_OUT_Data[11] | control_signals_OUT_Data[12] ;
+DataMem #(16,12) DM ( .clk(clk), .MAR(address_OUT_Data[11:0]), .MDR_in(result_OUT_Data) , .MDR_out(MDR_out) , .reset(reset) , .mem(memory_enable), .rw(control_signals_OUT_Data[12]));
 
 
-MW_pipeline_register #(5) MW_pipe(control_signals_IN_WB, control_sinals_OUT_WB,
-                             result_IN_WB, result_OUT_WB,
-                             reg_dst_num_IN_WB, reg_dst_num_OUT_WB,
-                             reg_dst_value_IN_WB, reg_dst_value_OUT_WB,
-                             sp_Reg_IN_WB, sp_Reg_OUT_WB,
-                             clk, reset);
+MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data), .control_sinals_OUT(control_signals_OUT_WB),
+                             .result_IN(MDR_out), .result_OUT(result_OUT_WB),
+                             .reg_dst_num_IN(reg_dst_num_OUT_Data), .reg_dst_num_OUT(reg_dst_num_OUT_WB),
+                             .reg_dst_value_IN(reg_dst_value_OUT_Data), .reg_dst_value_OUT(reg_dst_value_OUT_WB),
+                             .sp_Reg_IN(sp_Reg_OUT_Data), .sp_Reg_OUT(sp_Reg_OUT_WB),
+                             .clk(clk), .reset(reset));
+                          
 //----------------------------------------  Write Back Stage --------------------------------------------
-Incrementor  #(32) PC_INC(PC_out,PC_in);
+
 
 // Mux for MDR_out || result
-mux #(16) MUX1 (result,MDR_out, write_data, M2R);
+
+assign write_back_enable = control_signals_OUT_WB[12] | control_signals_OUT_WB[11] |control_signals_OUT_WB[10] ;
+mux #(16) MUX1 (.in1(MDR_out),.in2(result_OUT_WB), .out(write_back_output), .sel(write_back_enable) );
 
 
 //assign reset = 1'b1;
