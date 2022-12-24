@@ -1,4 +1,4 @@
-module MW_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 5) (control_sinals_IN, control_sinals_OUT,
+module MW_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 16) (control_sinals_IN, control_sinals_OUT,
                              result_IN, result_OUT,
                              reg_dst_num_IN, reg_dst_num_OUT,
                              reg_dst_value_IN, reg_dst_value_OUT,
@@ -13,13 +13,13 @@ input [15:0] result_IN;
 output [15:0] result_OUT;
 reg [15:0] result_REG;
 
-input [2:0] reg_dst_num_IN;
-output [2:0] reg_dst_num_OUT;
-reg [2:0] reg_dst_num_REG;
+input [3:0] reg_dst_num_IN;
+output [3:0] reg_dst_num_OUT;
+reg [3:0] reg_dst_num_REG;
 
-input [3:0] reg_dst_value_IN;
-output [3:0] reg_dst_value_OUT;
-reg [3:0] reg_dst_value_REG;
+input [15:0] reg_dst_value_IN;
+output [15:0] reg_dst_value_OUT;
+reg [15:0] reg_dst_value_REG;
 
 input [31:0] sp_Reg_IN;
 output [31:0] sp_Reg_OUT;

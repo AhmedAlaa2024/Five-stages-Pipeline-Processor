@@ -5,32 +5,32 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter SETC_OP = 9'b1;
 	parameter CLRC_OP = 9'b10;
 
-	parameter NOT_OP = 9'b001_00000;
-	parameter INC_OP = 9'b001_00001;
-	parameter DEC_OP = 9'b001_00010;
-	parameter OUT_OP = 9'b001_00011;
-	parameter IN_OP = 9'b001_00100;
+	parameter NOT_OP = 9'b001_000000;
+	parameter INC_OP = 9'b001_000001;
+	parameter DEC_OP = 9'b001_000010;
+	parameter OUT_OP = 9'b001_000011;
+	parameter IN_OP = 9'b001_000100;
 	
-	parameter MOV_OP = 9'b010_00000;
-	parameter ADD_OP = 9'b010_00001;
-	parameter SUB_OP = 9'b010_00010;
-	parameter AND_OP = 9'b010_00011;
-	parameter OR_OP = 9'b010_00100;
-	parameter SHL_OP = 9'b010_00101;
-	parameter SHR_OP = 9'b010_00110;
+	parameter MOV_OP = 9'b010_000000;
+	parameter ADD_OP = 9'b010_000001;
+	parameter SUB_OP = 9'b010_000010;
+	parameter AND_OP = 9'b010_000011;
+	parameter OR_OP = 9'b010_000100;
+	parameter SHL_OP = 9'b010_000101;
+	parameter SHR_OP = 9'b010_000110;
 
-	parameter PUSH_OP = 9'b011_00000;
-	parameter POP_OP = 9'b011_00001;
-	parameter LDM_OP = 9'b011_00010;
-	parameter LDD_OP = 9'b011_00011;
-	parameter STD_OP = 9'b011_00100;
+	parameter PUSH_OP = 9'b011_000000;
+	parameter POP_OP = 9'b011_000001;
+	parameter LDM_OP = 9'b011_000010;
+	parameter LDD_OP = 9'b011_000011;
+	parameter STD_OP = 9'b011_000100;
 
-	parameter JZ_OP = 9'b100_00000;
-	parameter JN_OP = 9'b100_00001;
-	parameter JC_OP = 9'b100_00010;
-	parameter JMP_OP = 9'b100_00100;
-	parameter CALL_OP = 9'b100_00110;
-	parameter RET_OP = 9'b100_01000;
+	parameter JZ_OP = 9'b100_000000;
+	parameter JN_OP = 9'b100_000001;
+	parameter JC_OP = 9'b100_000010;
+	parameter JMP_OP = 9'b100_000100;
+	parameter CALL_OP = 9'b100_000110;
+	parameter RET_OP = 9'b100_001000;
 	//********* End Opcodes of instructions ***********//
 
 	//********* Start ALU functions of instructions ***********//
