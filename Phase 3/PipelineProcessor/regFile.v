@@ -36,7 +36,8 @@ always @ (posedge clk)begin
 			general_regester[i]=0;
 		end
 		SP = 2047;
-		general_regester[REG_NUMBER] = 32;
+		general_regester[REG_NUMBER] = 0;
+		//general_regester[REG_NUMBER] = 32;
 		general_regester[REG_NUMBER+1] = 0;
 		CCR = 0;
 	end 
