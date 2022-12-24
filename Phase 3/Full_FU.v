@@ -1,4 +1,4 @@
-module FU_ALU_ALU(Current_Src_1_NUM,
+module Full_FU(Current_Src_1_NUM,
                   Current_Src_2_NUM,
                   Old_Dst_1_NUM, Old_Dst_1_VALUE,
                   Old_Dst_2_NUM, Old_Dst_2_VALUE,
@@ -27,9 +27,11 @@ always @ (posedge clk)
                         if (Old_Dst_1_NUM == Current_Src_1_NUM)
                             begin
                                 Actual_Src_1_VALUE <= Old_Dst_1_VALUE;
+                                Actual_Src_2_VALUE <= 16'bz;
                             end
                         else if (Old_Dst_1_NUM == Current_Src_2_NUM)
                             begin
+                                Actual_Src_1_VALUE <= 16'bz;
                                 Actual_Src_2_VALUE <= Old_Dst_1_VALUE;
                             end
                     end
@@ -38,33 +40,57 @@ always @ (posedge clk)
                         if (Old_Dst_2_NUM == Current_Src_1_NUM)
                             begin
                                 Actual_Src_1_VALUE <= Old_Dst_2_VALUE;
+                                Actual_Src_2_VALUE <= 16'bz;
                             end
                         else if (Old_Dst_2_NUM == Current_Src_2_NUM)
                             begin
+                                Actual_Src_1_VALUE <= 16'bz;
                                 Actual_Src_2_VALUE <= Old_Dst_2_VALUE;
                             end
                     end
                 else /* if ((M2R1 == 1) && (M2R2 == 1)) */
                     begin
                         /* Check the result out from the ALU first */
-                        if (Old_Dst_1_NUM == Current_Src_1_NUM)
+                        if ((Old_Dst_1_NUM == Current_Src_1_NUM) && (Old_Dst_1_NUM != Current_Src_2_NUM))
                             begin
                                 Actual_Src_1_VALUE <= Old_Dst_1_VALUE;
+                                Actual_Src_2_VALUE <= 16'bz;
                             end
-                        else if (Old_Dst_1_NUM == Current_Src_2_NUM)
+                        if ((Old_Dst_1_NUM != Current_Src_1_NUM) && (Old_Dst_1_NUM == Current_Src_2_NUM))
                             begin
+                                Actual_Src_1_VALUE <= 16'bz;
+                                Actual_Src_2_VALUE <= Old_Dst_1_VALUE;
+                            end
+                        if ((Old_Dst_1_NUM == Current_Src_1_NUM) && (Old_Dst_1_NUM == Current_Src_2_NUM))
+                            begin
+                                Actual_Src_1_VALUE <= Old_Dst_1_VALUE;
                                 Actual_Src_2_VALUE <= Old_Dst_1_VALUE;
                             end
                             /* Then check the data out from the memory */
-                        else if (Old_Dst_2_NUM == Current_Src_1_NUM)
+                        if ((Old_Dst_2_NUM == Current_Src_1_NUM) && (Old_Dst_2_NUM != Current_Src_2_NUM))
+                            begin
+                                Actual_Src_1_VALUE <= Old_Dst_2_VALUE;
+                                Actual_Src_2_VALUE = 16'bz;
+                            end
+                        if ((Old_Dst_2_NUM != Current_Src_1_NUM) && (Old_Dst_2_NUM == Current_Src_2_NUM))
+                            begin
+                                Actual_Src_1_VALUE <= 16'bz;
+                                Actual_Src_2_VALUE <= Old_Dst_2_VALUE;
+                            end
+                        if ((Old_Dst_2_NUM == Current_Src_1_NUM) && (Old_Dst_2_NUM == Current_Src_2_NUM))
+                            begin
+                                Actual_Src_1_VALUE <= Old_Dst_2_VALUE;
+                                Actual_Src_2_VALUE <= Old_Dst_2_VALUE;
+                            end
+                        if ((Old_Dst_1_NUM == Current_Src_1_NUM) && (Old_Dst_2_NUM == Current_Src_1_NUM))
                             begin
                                 Actual_Src_1_VALUE <= Old_Dst_2_VALUE;
                             end
-                        else if (Old_Dst_2_NUM == Current_Src_2_NUM)
+                        if ((Old_Dst_1_NUM == Current_Src_2_NUM) && (Old_Dst_2_NUM == Current_Src_2_NUM))
                             begin
                                 Actual_Src_2_VALUE <= Old_Dst_2_VALUE;
                             end
-                        else
+                        if ((Old_Dst_1_NUM != Current_Src_1_NUM) && (Old_Dst_1_NUM != Current_Src_2_NUM) && (Old_Dst_2_NUM != Current_Src_1_NUM) && (Old_Dst_2_NUM != Current_Src_2_NUM))
                             begin
                                 Actual_Src_1_VALUE = 16'bz;
                                 Actual_Src_2_VALUE = 16'bz;

@@ -1,4 +1,4 @@
-module FU_ALU_ALU_tb();
+module Full_FU_tb();
 
 localparam PERIOD = 100;
 
@@ -18,8 +18,9 @@ reg [15:0] Old_Dst_1_VALUE, Old_Dst_2_VALUE;
 wire [15:0] Actual_Src_1_VALUE, Actual_Src_2_VALUE;
 reg M2R1, M2R2;
 reg enable, clk;
+reg [3:0] counter;
 
-FU_ALU_ALU FU(
+Full_FU FU(
     Current_Src_1_NUM,
     Current_Src_2_NUM,
     Old_Dst_1_NUM, Old_Dst_1_VALUE,
@@ -34,6 +35,7 @@ initial
     begin
         /* Let the initial Edge is the +ve edge */
         clk = 0;
+        counter = 0;
 
         /* Test Case 1 */
         enable = 1;
@@ -48,6 +50,8 @@ initial
 
         Old_Dst_1_NUM = R3_NUM;
         Old_Dst_2_NUM = R5_NUM;
+
+        counter = counter + 1;
 
         #(PERIOD);
 
@@ -66,6 +70,8 @@ initial
         Old_Dst_1_NUM = R1_NUM;
         Old_Dst_2_NUM = R5_NUM;
 
+        counter = counter + 1;
+
         #(PERIOD);
 
         if ((Actual_Src_1_VALUE === 16'bz) && (Actual_Src_2_VALUE == 16'h1234))
@@ -82,6 +88,8 @@ initial
 
         Old_Dst_1_NUM = SP_NUM;
         Old_Dst_2_NUM = PC_NUM;
+
+        counter = counter + 1;
 
         #(PERIOD);
 
@@ -102,9 +110,11 @@ initial
         Old_Dst_1_NUM = R6_NUM;
         Old_Dst_2_NUM = R6_NUM;
 
+        counter = counter + 1;
+
         #(PERIOD);
 
-        if ((Actual_Src_1_VALUE == 16'h2486) && (Actual_Src_2_VALUE == 16'h2486))
+        if ((Actual_Src_1_VALUE == 16'h1234) && (Actual_Src_2_VALUE === 16'bz))
             $display("Test Case #4 PASSED!");
         else
             $display("Test Case #4 Failed!");
@@ -112,7 +122,7 @@ initial
         /* [TODO] I think this corner case is not possible */
         /* Test Case 5 */
         M2R1 = 0;
-        M2R1 = 1;
+        M2R2 = 1;
         Old_Dst_1_VALUE = 16'h2486;
         Old_Dst_2_VALUE = 16'h1234;
 
@@ -122,9 +132,11 @@ initial
         Old_Dst_1_NUM = R6_NUM;
         Old_Dst_2_NUM = R6_NUM;
 
+        counter = counter + 1;
+
         #(PERIOD);
 
-        if ((Actual_Src_1_VALUE === 16'bz) && (Actual_Src_2_VALUE === 16'bz))
+        if ((Actual_Src_1_VALUE == 16'h1234) && (Actual_Src_2_VALUE === 16'bz))
             $display("Test Case #5 PASSED!");
         else
             $display("Test Case #5 Failed!");
@@ -140,6 +152,8 @@ initial
 
         Old_Dst_1_NUM = R6_NUM;
         Old_Dst_2_NUM = R4_NUM;
+
+        counter = counter + 1;
 
         #(PERIOD);
 
@@ -159,6 +173,8 @@ initial
 
         Old_Dst_1_NUM = R6_NUM;
         Old_Dst_2_NUM = R4_NUM;
+
+        counter = counter + 1;
 
         #(PERIOD);
 
@@ -180,6 +196,8 @@ initial
 
         Old_Dst_1_NUM = R3_NUM;
         Old_Dst_2_NUM = R5_NUM;
+
+        counter = counter + 1;
 
         #(PERIOD);
 
