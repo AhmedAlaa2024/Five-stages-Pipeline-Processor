@@ -51,6 +51,10 @@ wire [15:0] Src1,Src2;
 wire [31:0] read_sp,read_pc;
 wire [4:0] read_ccr;
 
+wire forwardSrc1,forwardSrc2;
+wire [15:0] Actual_Src_1_VALUE,Actual_Src_2_VALUE;
+wire [15:0] forwardSrc1_VALUE,forwardSrc2_VALUE;
+
 //------------------------------------- EM Pipeline Signals
 wire [15:0] control_signals_OUT_Data;
 wire [15:0] result_OUT_Data;
@@ -130,7 +134,7 @@ assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,sta
 
 /*
                 Src1 -> is Destination which is operand2 in alu
-                Src2 -> is Source which is operand1 in alu   
+                Src2 -> is Source which is operand1 in alu
 */
 //mux #(16) imediate_mux (.in1(IR_in),.in2(Src2), .out(decode_address), .sel(control_signals_OUT[5]) );
 
@@ -150,7 +154,10 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                 MUX for output of pipeline register and imediate value  in operand2 which is destination
                 address_OUT or reg_src_2_value_OUT -> MUX
 */
-ALU alu( .op1(reg_src_1_value_OUT), .op2(reg_src_2_value_OUT), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
+mux #(16) forwardSrc1Mux (.in1(Actual_Src_1_VALUE),.in2(reg_src_1_value_OUT), .out(forwardSrc1_VALUE), .sel(forwardSrc1) );
+mux #(16) forwardSrc2Mux (.in1(Actual_Src_2_VALUE),.in2(reg_src_2_value_OUT), .out(forwardSrc2_VALUE), .sel(forwardSrc2) );
+
+ALU alu( .op1(forwardSrc1_VALUE), .op2(forwardSrc2_VALUE), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
 
 /*
                 Missing SP data value in DE stage so that can be propagated to EM stage //sp_Reg_IN_Data
@@ -158,7 +165,7 @@ ALU alu( .op1(reg_src_1_value_OUT), .op2(reg_src_2_value_OUT), .func(control_sig
 
 /*
                 SP Adder circuit in Execution stage according to push_pop signal
-                MUX for ALU Result and SP for MAR               
+                MUX for ALU Result and SP for MAR
 */
 
 // mux between address_OUT(immd) and Rsrc value
@@ -207,13 +214,14 @@ MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data),
 // need two muxs for source and destination in Executation stage
 // need two muxs for source and destination in Memory stage
 
-// Full_FU FU (.Current_Src_1_NUM(),.Current_Src_2_NUM(),
-//             .Old_Dst_1_NUM(), .Old_Dst_1_VALUE(),
-//             .Old_Dst_2_NUM(), .Old_Dst_2_VALUE(),
-//             .Actual_Src_1_VALUE(),
-//             .Actual_Src_2_VALUE(),
-//             .M2R1(), .M2R2(),
-//             .enable(), .clk(clk));
+Full_FU FU (.Current_Src_1_NUM(reg_src_1_num_OUT),.Current_Src_2_NUM(reg_src_2_num_OUT),
+            .Old_Dst_1_NUM(reg_dst_num_OUT_Data), .Old_Dst_1_VALUE(result_OUT_Data),
+            .Old_Dst_2_NUM(reg_dst_num_OUT_WB), .Old_Dst_2_VALUE(result_OUT_WB),
+            .Actual_Src_1_VALUE(Actual_Src_1_VALUE),
+            .Actual_Src_2_VALUE(Actual_Src_2_VALUE),
+            .M2R1(control_signals_OUT_Data[12]), .M2R2(control_signals_OUT_WB[12]),
+            .enable(1'b1), .clk(clk),
+            .forwardSrc1(forwardSrc1),.forwardSrc2(forwardSrc2));
 
 
 // Hazards Detection Unit

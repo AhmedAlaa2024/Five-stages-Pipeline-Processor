@@ -4,8 +4,7 @@ add wave -position 10  sim:/Processor_tb/processor/registers/general_regester
 
 add wave -position end sim:/Processor_tb/processor/*
 
-mem load -i {D:/Engineering/Third_Year/CMP_2023/First_Term/Arch/project/Phase3/PipelineProcessor/memory_test.mem} /Processor_tb/processor/InstrCache/cache
-mem load -i {D:/Engineering/Third_Year/CMP_2023/First_Term/Arch/project/Phase3/PipelineProcessor/data.mem} /Processor_tb/processor/DM/cache
+mem load -i {D:/Material/3rd CMP/First term/Computer arch/Project/processor/memory_test.mem} /Processor_tb/processor/InstrCache/cache
 
 run
 
