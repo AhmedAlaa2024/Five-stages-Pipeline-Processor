@@ -7,6 +7,8 @@
 #include <tuple>
 #include <vector>
 using namespace std;
+long long index = 0;
+
 unordered_map<string, string> regesters;
 unordered_map<string, vector<string>> instructions;
 unordered_map<string, string>labels;
@@ -29,7 +31,6 @@ void fill_interrupt(ofstream& MemFile);
 
 string convert_to_binary(long long num, int size = 32);
 string convert_to_hexa(long long num, int size = 8);
-
 int main(int argc, char* argv[]) {
 	ofstream MemFile("memory_test.mem");
 	ifstream InputFile("ISA.txt");
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]) {
 	prepare_resesters();
 	prepare_opcode(InputFile);
 	prepare_lables(Inst_lables);
-	fill_interrupt(MemFile);
+	//fill_interrupt(MemFile);
 	fill_inst_memory(Inst, MemFile);
 
 	// Close the file
@@ -133,20 +134,21 @@ vector<string> translate_line(string line, long long index) {
 				translated_line.push_back(convert_to_binary(stoi(labels[splited_line[1]]), 16));
 			}
 			else {
-				translated_line.push_back(instruction_line + "0000" + regesters[splited_line[1]]);
+				translated_line.push_back(instruction_line + "000" + regesters[splited_line[1]]);
 			}
 		}
 		else {
 			if (inst[1] == "1" && inst[3] == "0")
 			{
-				instruction_line += ("0" + regesters[splited_line[1]]);
+				instruction_line += ( regesters[splited_line[1]]);
 			}
 			else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0") {
-				instruction_line += ("0" + regesters[splited_line[1]]);
+				instruction_line += (  regesters[splited_line[1]]);
 			}
 			else {
-				instruction_line += "0000";
+				instruction_line += "000";
 			}
+			instruction_line += "0";
 			instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
 			translated_line.push_back(instruction_line);
 			if (inst[3] == "1")
@@ -173,7 +175,6 @@ void prepare_lables(ifstream& Inst) {
 	}
 }
 void fill_interrupt(ofstream& MemFile) {
-	long long index = 0;
 	long long size = (long long)(1 << 5);
 	while (index < size)
 	{
@@ -185,7 +186,6 @@ void fill_interrupt(ofstream& MemFile) {
 }
 void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 	string line;
-	long long index = (long long)(1 << 5);
 	while (getline(Inst, line)) {
 		line = to_lower(line);
 		vector<string> out = translate_line(line, index);
