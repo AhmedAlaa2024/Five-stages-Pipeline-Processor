@@ -123,7 +123,7 @@ vector<string> translate_line(string line, long long index) {
 	if (splited_line.size() > 0 && instructions.find(splited_line[0]) != instructions.end())
 	{
 		vector<string> inst = instructions[splited_line[0]];
-		instruction_line = inst[0] + "   ";
+		instruction_line = inst[0] ;
 		if (splited_line[0] == "jz" || splited_line[0] == "jn" || splited_line[0] == "jc" || splited_line[0] == "jo" || splited_line[0] == "jmp" || splited_line[0] == "jmpi" || splited_line[0] == "call" || splited_line[0] == "calli") {
 			if (splited_line[0] == "jmpi" || splited_line[0] == "calli") {
 
