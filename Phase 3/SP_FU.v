@@ -22,23 +22,23 @@ always @(posedge clk) begin
                 begin
                     if (Stack_OP_1 == 1)
                         begin
-                            SPact_VALUE = SP1_VALUE;
+                            SPact_VALUE <= SP1_VALUE;
                         end
                     else if (Stack_OP_2 == 1)
                         begin
-                            SPact_VALUE = SP2_VALUE;
+                            SPact_VALUE <= SP2_VALUE;
                         end
                     else
-                        SPact_VALUE = 32'bz;
+                        SPact_VALUE <= 32'bz;
                 end
             else
                 begin
-                    SPact_VALUE = 32'bz;
+                    SPact_VALUE <= 32'bz;
                 end
         end
     else
         begin
-            SPact_VALUE = 32'bz;
+            SPact_VALUE <= 32'bz;
         end
 end
 
