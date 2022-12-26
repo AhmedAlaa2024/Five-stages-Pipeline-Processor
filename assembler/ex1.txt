@@ -1,3 +1,5 @@
 not r0
 std r0,r1
-ldd r1,r1
+ldd r2,r1
+inc r1
+inc r1
