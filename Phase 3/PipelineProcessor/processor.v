@@ -37,6 +37,7 @@ wire [15:0] reg_src_2_value_OUT;
 wire [15:0] address_IN;
 wire [15:0] address_OUT;
 wire [15:0] alu_address;
+wire [15:0] decode_address;
 wire [15:0] memory_address;
 
 
@@ -114,7 +115,7 @@ CU  ControlUnit (opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_op
 
 assign Opd1_Add =  IR_out[3:0];    // destination
 assign Opd2_Add =  IR_out[6:4];    // source
-assign address_IN = IR_in;
+//assign address_IN = IR_out;
 
 
 regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(write_sp),
@@ -128,6 +129,7 @@ assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,sta
                 Src1 -> is Destination which is operand2 in alu
                 Src2 -> is Source which is operand1 in alu   
 */
+//mux #(16) imediate_mux (.in1(IR_in),.in2(Src2), .out(decode_address), .sel(control_signals_OUT[5]) );
 
 DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .control_sinals_OUT(control_signals_OUT), 
                              .reg_dst_num_IN(Opd1_Add), .reg_dst_num_OUT(reg_dst_num_OUT),
@@ -145,7 +147,7 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                 MUX for output of pipeline register and imediate value  in operand2 which is destination
                 address_OUT or reg_src_2_value_OUT -> MUX
 */
-ALU alu( .op1(reg_src_1_value_OUT), .op2(reg_src_2_value_OUT), .func(control_signals_OUT[3:0]), .result(result), .outFlags(write_ccr) );
+ALU alu( .op1(reg_src_1_value_OUT), .op2(reg_src_2_value_OUT), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
 
 /*
                 Missing SP data value in DE stage so that can be propagated to EM stage //sp_Reg_IN_Data
@@ -157,7 +159,7 @@ ALU alu( .op1(reg_src_1_value_OUT), .op2(reg_src_2_value_OUT), .func(control_sig
 */
 
 // mux between address_OUT(immd) and Rsrc value
-mux #(16) address_load (.in1(address_OUT),.in2(reg_src_1_value_OUT), .out(alu_address), .sel(control_signals_OUT[5]) );
+mux #(16) address_load (.in1(IR_in),.in2(reg_src_1_value_OUT), .out(alu_address), .sel(control_signals_OUT[5]) );
 
 EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .control_sinals_OUT(control_signals_OUT_Data),
                              .result_IN(result), .result_OUT(result_OUT_Data),
@@ -169,7 +171,6 @@ EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .co
 
 
 //----------------------------------------  Memory Stage --------------------------------------------
-// DataMem  #(16, 12)  DM(.clk, operand1[11:0], result,MDR_out, reset, mem_en, rw);
 
 /*
                 MDR out result -> should be send to write back and be write back of register
@@ -179,13 +180,14 @@ EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .co
 
 assign memory_enable = control_signals_OUT_Data[11] | control_signals_OUT_Data[12] ;
 // mux between address_OUT_Data and Rdst value with memory write as selector
-mux #(16) address_mem (.in1(address_OUT_Data),.in2(reg_dst_value_OUT_Data), .out(memory_address), .sel(control_signals_OUT_Data[11]) );
+mux #(16) address_mem (.in1(reg_dst_value_OUT_Data),.in2(address_OUT_Data), .out(memory_address), .sel(control_signals_OUT_Data[11]) );
 
 DataMem #(16,12) DM ( .clk(clk), .MAR(memory_address[11:0]), .MDR_in(result_OUT_Data) , .MDR_out(MDR_out) , .reset(reset) , .mem(memory_enable), .rw(control_signals_OUT_Data[12]));
 
 
 //  Write Back Stage 
-assign write_back_enable = control_signals_OUT_WB[12] | control_signals_OUT_WB[11] |control_signals_OUT_WB[10] ;
+//assign write_back_enable = control_signals_OUT_WB[12] | control_signals_OUT_WB[11] | control_signals_OUT_WB[10] ;
+assign write_back_enable = control_signals_OUT_Data[12];
 mux #(16) MUX1 (.in1(MDR_out),.in2(result_OUT_Data), .out(write_back_output), .sel(write_back_enable) );
 
 MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data), .control_sinals_OUT(control_signals_OUT_WB),
@@ -200,9 +202,5 @@ MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data),
 
 // Mux for MDR_out || result
 
-
-
-//assign reset = 1'b1;
-//assign M2R  = mem_en & rw;
 
 endmodule

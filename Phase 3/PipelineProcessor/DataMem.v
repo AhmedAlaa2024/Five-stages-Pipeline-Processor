@@ -11,7 +11,7 @@ reg [WORD_LENGTH-1:0] cache [((2 ** ADDRESS_SPACE)-1):0];
 /* Note: reset is an active low signal */
 assign MDR_out=MDR_reg;
 integer i;
-always @ (posedge clk)
+always @ (negedge clk)
     if (!reset)
         begin
             for (i=0; i<(2 ** ADDRESS_SPACE) ; i=i+1)
