@@ -33,6 +33,8 @@ string convert_to_hexa(long long num, int size = 8);
 int main(int argc, char* argv[]) {
 	ofstream MemFile("memory_test.mem");
 	ifstream InputFile("ISA.txt");
+	/*ifstream Inst(argv[1]);
+	ifstream Inst_lables(argv[1]);*/
 	ifstream Inst(argv[1]);
 	ifstream Inst_lables(argv[1]);
 	prepare_resesters();
@@ -176,7 +178,7 @@ void fill_interrupt(ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;
-		memory[index / 2] = translate_line_index(index) + ":\t\t" + "0000000000000000";
+		memory[index / 2] = translate_line_index(index/2) + ":\t\t" + "0000000000000000";
 
 		index += 2;
 	}
@@ -189,7 +191,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 		vector<string> out = translate_line(line, index);
 		for (int i = 0; i < out.size(); i++) {
 			//MemFile << translate_line_index(index) + ":\t\t" + out[i] << endl;
-			memory[index / 2] = translate_line_index(index) + ":\t\t" + out[i];
+			memory[index / 2] = translate_line_index(index/2) + ":\t\t" + out[i];
 			index += 2;
 		}
 	}
@@ -200,7 +202,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;;
-		memory[index / 2] = translate_line_index(index) + ":\t\t" + "0000000000000000";
+		memory[index / 2] = translate_line_index(index/2) + ":\t\t" + "0000000000000000";
 		index += 2;
 	}
 	MemFile << "// memory data file (do not edit the following line - required for mem load use)\n" <<
