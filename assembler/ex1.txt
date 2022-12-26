@@ -1,10 +1,15 @@
-ldm 12,r2
+lable1:dec r1
+ldm 12,r1
 not r0
 ADD R1,R0
 ADD R1,R0
+Jmp r1
+jmpi lable1
+
+calli label2
 setc r2,r1
 ldd r3,r2
 ldd r5,r2
-nop
+label2 : nop
 ldd r7,r2
 ldd r1,r2
