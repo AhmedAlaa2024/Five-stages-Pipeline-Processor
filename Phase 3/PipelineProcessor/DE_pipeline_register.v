@@ -71,6 +71,7 @@ always @(posedge clk)
         // Synchronous write @ +ve edge
         else
             begin
+                if(en) begin
                 control_sinals_REG = control_sinals_IN;
                 reg_dst_num_REG = reg_dst_num_IN;
                 reg_dst_value_REG = reg_dst_value_IN;
@@ -79,6 +80,17 @@ always @(posedge clk)
                 reg_src_2_num_REG = reg_src_2_num_IN;
                 reg_src_2_value_REG = reg_src_2_value_IN;
                 address_REG = address_IN;
+                end
+                // else begin
+                // control_sinals_REG = 0;
+                // reg_dst_num_REG = 0;
+                // reg_dst_value_REG = 0;
+                // reg_src_1_num_REG = 0;
+                // reg_src_1_value_REG = 0;
+                // reg_src_2_num_REG = 0;
+                // reg_src_2_value_REG = 0;
+                // address_REG = 0;
+                // end
             end
     end
 endmodule

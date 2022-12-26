@@ -20,7 +20,10 @@ always @(posedge clk)
         // Synchronous write @ +ve edge
         else
             begin
-                FD_PIPELINE_REG = IR_Reg_IN;
+                if(en)
+                    FD_PIPELINE_REG = IR_Reg_IN;
+                else 
+                     FD_PIPELINE_REG = 0;   
             end
     end
 endmodule

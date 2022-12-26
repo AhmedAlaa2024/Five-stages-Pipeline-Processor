@@ -25,7 +25,7 @@ assign read_pc[31:16]= general_regester[REG_NUMBER+1]  ;
 assign read_pc[15:0]=general_regester[REG_NUMBER];
 assign read_ccr=CCR;
 integer i;
-always @ (posedge clk)begin
+always @ (negedge clk)begin
 	//write in the posedge
 	if(rst != 0)begin
 		CCR=write_ccr;
