@@ -80,6 +80,10 @@ wire [15:0] write_back_output;
 wire write_back_enable;
 
 
+// Hazards Detection Unit
+
+wire loadUseStall;
+
 
 
 //----------------------------------------  Fetch Stage --------------------------------------------------
@@ -88,9 +92,8 @@ wire write_back_enable;
 InstrMem #(16, 21) InstrCache (clk, PC_in[20:0], IR_in, reset);
 
 // increment pcin , pcout = pcin + 1
-Incrementor  #(32) PC_INC(.in(PC_in),.out(PC_out));
-
-FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset);
+Incrementor  #(32) PC_INC(.in(PC_in),.en(!loadUseStall),.out(PC_out));
+FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset,!loadUseStall);
 
 //---------------------------------------- Decode Stage  -------------------------------------------------
 
@@ -121,7 +124,7 @@ assign Opd2_Add =  IR_out[6:4];    // source
 regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(write_sp),
      .Src1(Src1),.Src2(Src2),.read_sp(read_sp),.read_pc(PC_in),.read_ccr(read_ccr),
      .write_sp_data(write_sp_data) , .write_pc_data(PC_out) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
-      .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(reg_dst_num_OUT_WB));
+      .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(reg_dst_num_OUT_WB),.en(loadUseStall));
 
 assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
 
@@ -139,7 +142,7 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                              .reg_src_2_num_IN(Opd1_Add), .reg_src_2_num_OUT(reg_src_2_num_OUT),
                              .reg_src_2_value_IN(Src1), .reg_src_2_value_OUT(reg_src_2_value_OUT),
                              .address_IN(address_IN), .address_OUT(address_OUT),
-                             .clk(clk), .reset(reset));
+                             .clk(clk), .reset(reset),.en(!loadUseStall));
 
 //----------------------------------------  Execution Stage --------------------------------------------
 
@@ -200,7 +203,27 @@ MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data),
 //----------------------------------------  Write Back Stage --------------------------------------------
 
 
-// Mux for MDR_out || result
+// Forward Unit Block
+// need two muxs for source and destination in Executation stage
+// need two muxs for source and destination in Memory stage
 
+// Full_FU FU (.Current_Src_1_NUM(),.Current_Src_2_NUM(),
+//             .Old_Dst_1_NUM(), .Old_Dst_1_VALUE(),
+//             .Old_Dst_2_NUM(), .Old_Dst_2_VALUE(),
+//             .Actual_Src_1_VALUE(),
+//             .Actual_Src_2_VALUE(),
+//             .M2R1(), .M2R2(),
+//             .enable(), .clk(clk));
+
+
+// Hazards Detection Unit
+HDU load_use_stall(
+    .Old_Dst_NUM(Opd1_Add),
+    .Current_Src_NUM(reg_dst_num_OUT),
+    .DMR(control_signals_OUT[12]),
+    .enable(1'b1),
+    .clk(clk),
+    .Stall(loadUseStall)
+);
 
 endmodule

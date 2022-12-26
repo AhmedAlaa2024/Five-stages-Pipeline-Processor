@@ -6,7 +6,7 @@ module DE_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 16) (control_si
                              reg_src_2_num_IN, reg_src_2_num_OUT,
                              reg_src_2_value_IN, reg_src_2_value_OUT,
                              address_IN, address_OUT,
-                             clk, reset);
+                             clk, reset,en);
 
 input [NUMBER_CONTROL_SIGNALS-1:0] control_sinals_IN;
 output [NUMBER_CONTROL_SIGNALS-1:0] control_sinals_OUT;
@@ -42,16 +42,17 @@ reg [15:0] address_REG;
 
 input clk;
 input reset;
+input en;
 
 // Asynchronous read
-assign control_sinals_OUT = control_sinals_REG;
-assign reg_dst_num_OUT = reg_dst_num_REG;
-assign reg_dst_value_OUT = reg_dst_value_REG;
-assign reg_src_1_num_OUT = reg_src_1_num_REG;
-assign reg_src_1_value_OUT = reg_src_1_value_REG;
-assign reg_src_2_num_OUT = reg_src_2_num_REG;
-assign reg_src_2_value_OUT = reg_src_2_value_REG;
-assign address_OUT = address_REG;
+assign control_sinals_OUT = (en)? control_sinals_REG:0;
+assign reg_dst_num_OUT = (en)? reg_dst_num_REG:0;
+assign reg_dst_value_OUT = (en)? reg_dst_value_REG:0;
+assign reg_src_1_num_OUT = (en)? reg_src_1_num_REG:0;
+assign reg_src_1_value_OUT =(en)?  reg_src_1_value_REG:0;
+assign reg_src_2_num_OUT = (en)? reg_src_2_num_REG:0;
+assign reg_src_2_value_OUT = (en)? reg_src_2_value_REG:0;
+assign address_OUT = (en)? address_REG:0;
 
 always @(posedge clk)
     begin
