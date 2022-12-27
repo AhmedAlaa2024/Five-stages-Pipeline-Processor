@@ -43,16 +43,23 @@ wire [15:0] address_OUT;
 wire [15:0] alu_address;
 wire [15:0] decode_address;
 wire [15:0] memory_address;
+wire [15:0] final_memory_address;
+wire [31:0] SP_value_OUT;
+wire [31:0] SP_value_in;
+wire [31:0] SP_address;
+wire [31:0] SP_corrected_address;
+
+
 
 
 wire [2:0] Opd2_Add;
 wire [3:0] Opd1_Add,write_addr1;
 wire [15:0] write_data1;
-wire [31:0] write_sp_data,write_pc_data;
+wire [31:0] write_pc_data;
 wire [4:0]  write_ccr;
 
 wire [15:0] Src1,Src2;
-wire [31:0] read_sp,read_pc;
+wire [31:0] read_pc;
 wire [4:0] read_ccr;
 
 wire forwardSrc1,forwardSrc2;
@@ -65,7 +72,6 @@ wire [15:0] result_OUT_Data;
 wire [15:0] address_OUT_Data;
 wire [3:0] reg_dst_num_OUT_Data;
 wire [15:0] reg_dst_value_OUT_Data;
-wire [31:0] sp_Reg_IN_Data;
 wire [31:0] sp_Reg_OUT_Data;
 
 
@@ -132,9 +138,9 @@ assign Opd2_Add =  IR_out[6:4];    // source
 //assign address_IN = IR_out;
 
 
-regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(write_sp),
-     .Src1(Src1),.Src2(Src2),.read_sp(read_sp),.read_pc(PC_in),.read_ccr(read_ccr),
-     .write_sp_data(write_sp_data) , .write_pc_data(PC_out) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
+regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(control_signals_OUT[4]),
+     .Src1(Src1),.Src2(Src2),.read_sp(SP_value_in),.read_pc(PC_in),.read_ccr(read_ccr),
+     .write_sp_data(SP_address) , .write_pc_data(PC_out) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
       .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(reg_dst_num_OUT_WB),.en(loadUseStall));
 
 assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
@@ -153,6 +159,7 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                              .reg_src_2_num_IN(Opd1_Add), .reg_src_2_num_OUT(reg_src_2_num_OUT),
                              .reg_src_2_value_IN(Src1), .reg_src_2_value_OUT(reg_src_2_value_OUT),
                              .address_IN(IR_in), .address_OUT(address_OUT),
+                             .SP_value_IN(SP_value_in),.SP_value_OUT(SP_value_OUT),
                              .clk(clk), .reset(reset),.en(!loadUseStall));
 
 // or with reset signal pass_immediate signal to flush pipeline of immediate instruction
@@ -164,6 +171,11 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
 */
 mux #(16) forwardSrc1Mux (.in1(Actual_Src_1_VALUE),.in2(reg_src_1_value_OUT), .out(forwardSrc1_VALUE), .sel(forwardSrc1) );
 mux #(16) forwardSrc2Mux (.in1(Actual_Src_2_VALUE),.in2(reg_src_2_value_OUT), .out(forwardSrc2_VALUE), .sel(forwardSrc2) );
+
+stackAdder SP_Value(.stack_op(control_signals_OUT[7]),.push_pop(control_signals_OUT[6]),.in(SP_value_OUT),.out(SP_address));
+
+mux #(32) SP_mux (.in1(SP_value_OUT),.in2(SP_address), .out(SP_corrected_address), .sel(control_signals_OUT[6]) );
+
 
 ALU alu( .op1(forwardSrc1_VALUE), .op2(forwardSrc2_VALUE), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
 
@@ -185,7 +197,7 @@ EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .co
                              .address_IN(alu_address), .address_OUT(address_OUT_Data),
                              .reg_dst_num_IN(reg_dst_num_OUT), .reg_dst_num_OUT(reg_dst_num_OUT_Data),
                              .reg_dst_value_IN(reg_dst_value_OUT), .reg_dst_value_OUT(reg_dst_value_OUT_Data),
-                             .sp_Reg_IN(sp_Reg_IN_Data), .sp_Reg_OUT(sp_Reg_OUT_Data),
+                             .sp_Reg_IN(SP_corrected_address), .sp_Reg_OUT(sp_Reg_OUT_Data),
                              .clk(clk), .reset(reset));
 
 
@@ -201,7 +213,9 @@ assign memory_enable = control_signals_OUT_Data[11] | control_signals_OUT_Data[1
 // mux between address_OUT_Data and Rdst value with memory write as selector
 mux #(16) address_mem (.in1(reg_dst_value_OUT_Data),.in2(address_OUT_Data), .out(memory_address), .sel(control_signals_OUT_Data[11]) );
 
-DataMem #(16,12) DM ( .clk(clk), .MAR(memory_address[11:0]), .MDR_in(result_OUT_Data) , .MDR_out(MDR_out) , .reset(reset) , .mem(memory_enable), .rw(control_signals_OUT_Data[12]));
+mux #(16) stack_address_mux (.in1(sp_Reg_OUT_Data[15:0]),.in2(memory_address), .out(final_memory_address), .sel(control_signals_OUT_Data[7]) );
+
+DataMem #(16,12) DM ( .clk(clk), .MAR(final_memory_address[11:0]), .MDR_in(result_OUT_Data) , .MDR_out(MDR_out) , .reset(reset) , .mem(memory_enable), .rw(control_signals_OUT_Data[12]));
 
 
 //  Write Back Stage 
