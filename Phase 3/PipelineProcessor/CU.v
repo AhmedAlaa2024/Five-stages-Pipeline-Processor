@@ -41,7 +41,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter NOT_ALU = 4'b0101;
 	parameter INC_ALU = 4'b0110;
 	parameter DEC_ALU = 4'b0111;
-	parameter OUT_ALU = 4'b0100;
+	parameter OUT_ALU = 4'b0011; // Edited move operand 1
 	parameter IN_ALU = 4'b0000;
 	
 	parameter MOV_ALU = 4'b0011;

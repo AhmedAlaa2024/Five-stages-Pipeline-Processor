@@ -1,8 +1,11 @@
 
-module Processor (clk,reset);
+module Processor (clk,reset,portIn,portOut);
 
 //Inputs
 input clk,reset;
+input [15:0]portIn;
+output [15:0]portOut;
+
 //wire clk;
 
 // wires
@@ -10,6 +13,7 @@ wire [31:0] PC_in,PC_out;
 wire [15:0] IR_in,IR_out,write_data,result;
 wire [8:0] opcode;
 wire [4:0] outFlags;
+
 
 //------------------------------------- Control Unit Signals
 wire branch;
@@ -83,6 +87,9 @@ wire [15:0] MDR_out;
 wire [15:0] write_back_output;
 wire write_back_enable;
 
+// Input wire IO
+wire [15:0] in;
+wire [15:0] write_back_output_IO;
 
 // Hazards Detection Unit
 
@@ -199,9 +206,10 @@ DataMem #(16,12) DM ( .clk(clk), .MAR(memory_address[11:0]), .MDR_in(result_OUT_
 //assign write_back_enable = control_signals_OUT_WB[12] | control_signals_OUT_WB[11] | control_signals_OUT_WB[10] ;
 assign write_back_enable = control_signals_OUT_Data[12];
 mux #(16) MUX1 (.in1(MDR_out),.in2(result_OUT_Data), .out(write_back_output), .sel(write_back_enable) );
+mux #(16) MUX2 (.in1(in),.in2(write_back_output), .out(write_back_output_IO), .sel(control_signals_OUT_Data[9] & control_signals_OUT_Data[10]) );
 
 MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data), .control_sinals_OUT(control_signals_OUT_WB),
-                             .result_IN(write_back_output), .result_OUT(result_OUT_WB),
+                             .result_IN(write_back_output_IO), .result_OUT(result_OUT_WB),
                              .reg_dst_num_IN(reg_dst_num_OUT_Data), .reg_dst_num_OUT(reg_dst_num_OUT_WB),
                              .reg_dst_value_IN(reg_dst_value_OUT_Data), .reg_dst_value_OUT(reg_dst_value_OUT_WB),
                              .sp_Reg_IN(sp_Reg_OUT_Data), .sp_Reg_OUT(sp_Reg_OUT_WB),
@@ -215,7 +223,7 @@ MW_pipeline_register #(16) MW_pipe(.control_sinals_IN(control_signals_OUT_Data),
 // need two muxs for source and destination in Memory stage
 
 Full_FU FU (.Current_Src_1_NUM(reg_src_1_num_OUT),.Current_Src_2_NUM(reg_src_2_num_OUT),
-            .Old_Dst_1_NUM(reg_dst_num_OUT_Data), .Old_Dst_1_VALUE(result_OUT_Data),
+            .Old_Dst_1_NUM(reg_dst_num_OUT_Data), .Old_Dst_1_VALUE(write_back_output_IO),
             .Old_Dst_2_NUM(reg_dst_num_OUT_WB), .Old_Dst_2_VALUE(result_OUT_WB),
             .Actual_Src_1_VALUE(Actual_Src_1_VALUE),
             .Actual_Src_2_VALUE(Actual_Src_2_VALUE),
@@ -228,10 +236,20 @@ Full_FU FU (.Current_Src_1_NUM(reg_src_1_num_OUT),.Current_Src_2_NUM(reg_src_2_n
 HDU load_use_stall(
     .Old_Dst_NUM(Opd1_Add),
     .Current_Src_NUM(reg_dst_num_OUT),
-    .DMR(control_signals_OUT[12]),
+    .DMR(control_signals_OUT[12] | control_signals_OUT[9]),
     .enable(1'b1),
     .clk(clk),
     .Stall(loadUseStall)
 );
 
+// IO unit
+IO io(.Result(result_OUT_Data),
+    .PORTIN(portIn),
+    .PORTOUT(portOut),
+    .IN(in),
+    .IOR(control_signals_OUT_Data[9]),
+    .IOW(control_signals_OUT_Data[8]),
+    .IOE(control_signals_OUT_Data[10]),
+    .reset(reset),
+    .clk(clk));
 endmodule

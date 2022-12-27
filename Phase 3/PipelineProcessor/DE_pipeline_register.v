@@ -72,14 +72,14 @@ always @(posedge clk)
         else
             begin
                 if(en) begin
-                control_sinals_REG = control_sinals_IN;
-                reg_dst_num_REG = reg_dst_num_IN;
-                reg_dst_value_REG = reg_dst_value_IN;
-                reg_src_1_num_REG = reg_src_1_num_IN;
-                reg_src_1_value_REG = reg_src_1_value_IN;
-                reg_src_2_num_REG = reg_src_2_num_IN;
-                reg_src_2_value_REG = reg_src_2_value_IN;
-                address_REG = address_IN;
+                    control_sinals_REG = control_sinals_IN;
+                    reg_dst_num_REG = reg_dst_num_IN;
+                    reg_dst_value_REG = reg_dst_value_IN;
+                    reg_src_1_num_REG = reg_src_1_num_IN;
+                    reg_src_1_value_REG = reg_src_1_value_IN;
+                    reg_src_2_num_REG = reg_src_2_num_IN;
+                    reg_src_2_value_REG = reg_src_2_value_IN;
+                    address_REG = address_IN;
                 end
                 // else begin
                 // control_sinals_REG = 0;

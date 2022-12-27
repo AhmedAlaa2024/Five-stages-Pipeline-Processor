@@ -22,8 +22,8 @@ always @(posedge clk)
             begin
                 if(en)
                     FD_PIPELINE_REG = IR_Reg_IN;
-                else 
-                     FD_PIPELINE_REG = 0;   
+                // else 
+                //      FD_PIPELINE_REG = 0;   
             end
     end
 endmodule

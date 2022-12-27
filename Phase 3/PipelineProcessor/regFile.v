@@ -30,11 +30,11 @@ always @ (negedge clk)begin
 	if(rst != 0)begin
 		CCR=write_ccr;
 		if(en) begin
-		{general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]}-1;
+		// {general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]}-1;
 		end 
 		else begin
-		general_regester[REG_NUMBER] = write_pc_data[15:0];
-		general_regester[REG_NUMBER+1] = write_pc_data[31:16];
+		// general_regester[REG_NUMBER] = write_pc_data[15:0];
+		// general_regester[REG_NUMBER+1] = write_pc_data[31:16];
 		end
 	end
 
@@ -43,9 +43,9 @@ always @ (negedge clk)begin
 			general_regester[i]=0;
 		end
 		SP = 2047;
-		general_regester[REG_NUMBER] = 0;
+		// general_regester[REG_NUMBER] = 0;
 		//general_regester[REG_NUMBER] = 32;
-		general_regester[REG_NUMBER+1] = 0;
+		// general_regester[REG_NUMBER+1] = 0;
 		CCR = 0;
 	end 
 	else if(Data_write1 == 1'b1 )begin 
@@ -56,18 +56,26 @@ always @ (negedge clk)begin
 		SP=write_sp_data;
 	end
 end
-// always @(negedge clk) begin
+always @(posedge clk) begin
 
-// 	if(rst != 0)begin
-// 		general_regester[REG_NUMBER] = write_pc_data[15:0];
-// 		general_regester[REG_NUMBER+1] = write_pc_data[31:16];
-// 	end
-// 	if (rst == 0) begin
-// 		general_regester[REG_NUMBER] = 0;
-// 		general_regester[REG_NUMBER+1] = 0;
-// 		CCR = 0;
-// 	end 
-// end
+	if(rst != 0)begin
+		// general_regester[REG_NUMBER] = write_pc_data[15:0];
+		// general_regester[REG_NUMBER+1] = write_pc_data[31:16];
+
+		if(en) begin
+			{general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]};
+		end 
+		else begin
+			general_regester[REG_NUMBER] = write_pc_data[15:0];
+			general_regester[REG_NUMBER+1] = write_pc_data[31:16];
+		end
+	end
+	if (rst == 0) begin
+		general_regester[REG_NUMBER] = 0;
+		general_regester[REG_NUMBER+1] = 0;
+		CCR = 0;
+	end 
+end
 
 
 endmodule
