@@ -152,9 +152,10 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                              .reg_src_1_value_IN(Src2), .reg_src_1_value_OUT(reg_src_1_value_OUT),
                              .reg_src_2_num_IN(Opd1_Add), .reg_src_2_num_OUT(reg_src_2_num_OUT),
                              .reg_src_2_value_IN(Src1), .reg_src_2_value_OUT(reg_src_2_value_OUT),
-                             .address_IN(address_IN), .address_OUT(address_OUT),
+                             .address_IN(IR_in), .address_OUT(address_OUT),
                              .clk(clk), .reset(reset),.en(!loadUseStall));
 
+// or with reset signal pass_immediate signal to flush pipeline of immediate instruction
 //----------------------------------------  Execution Stage --------------------------------------------
 
 /*
@@ -175,7 +176,8 @@ ALU alu( .op1(forwardSrc1_VALUE), .op2(forwardSrc2_VALUE), .func(control_signals
                 MUX for ALU Result and SP for MAR
 */
 
-// mux between address_OUT(immd) and Rsrc value
+// mux between address_OUT(immd) and Rsrc value not IR_in instead address_OUT
+
 mux #(16) address_load (.in1(IR_in),.in2(reg_src_1_value_OUT), .out(alu_address), .sel(control_signals_OUT[5]) );
 
 EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .control_sinals_OUT(control_signals_OUT_Data),
