@@ -23,7 +23,7 @@ string to_lower(string input);
 void prepare_resesters();
 void prepare_opcode(ifstream& InputFile);
 vector<string> split_line(string& line);
-vector<string> translate_line(string line, long long index);
+vector<string> translate_line(string line);
 string translate_line_index(long long);
 void prepare_lables(ifstream& Inst);
 void fill_inst_memory(ifstream& Inst, ofstream& MemFile);
@@ -34,10 +34,10 @@ string convert_to_hexa(long long num, int size = 8);
 int main(int argc, char* argv[]) {
 	ofstream MemFile("memory_test.mem");
 	ifstream InputFile("ISA.txt");
-	ifstream Inst(argv[1]);
-	ifstream Inst_lables(argv[1]);
-	/*ifstream Inst("ex1.txt");
-	ifstream Inst_lables("ex1.txt");*/
+	/*ifstream Inst(argv[1]);
+	ifstream Inst_lables(argv[1]);*/
+	ifstream Inst("ex1.txt");
+	ifstream Inst_lables("ex1.txt");
 	prepare_resesters();
 	prepare_opcode(InputFile);
 	prepare_lables(Inst_lables);
@@ -98,8 +98,16 @@ vector<string> split_line(string& line) {
 			subString = "";
 
 		}
-		else if ((line[i] >= 'a' && line[i] <= 'z') || (line[i] <= '9' && line[i] >= '0')) {
+		else if ((line[i] >= 'a' && line[i] <= 'z') || (line[i] <= '9' && line[i] >= '0') || (line[i] == '.')) {
 			subString += line[i];
+		}
+		else if (line[i] == '#') {
+			if (subString.length() > 0)
+			{
+				splited_line.push_back(subString);
+				subString = "";
+			}
+			break;
 		}
 		else if (subString.length() > 0) {
 			splited_line.push_back(subString);
@@ -111,7 +119,7 @@ vector<string> split_line(string& line) {
 		splited_line.push_back(subString);
 	return splited_line;
 }
-vector<string> translate_line(string line, long long index) {
+vector<string> translate_line(string line) {
 
 	vector<string>splited_line = split_line(line);
 	vector<string> translated_line = vector<string>(0);
@@ -123,7 +131,7 @@ vector<string> translate_line(string line, long long index) {
 		splited_line.erase(splited_line.begin());
 		splited_line.erase(splited_line.begin());
 	}
-	if (splited_line.size() > 0 && instructions.find(splited_line[0]) != instructions.end())
+	if (instructions.find(splited_line[0]) != instructions.end())
 	{
 		vector<string> inst = instructions[splited_line[0]];
 		instruction_line = inst[0];
@@ -157,6 +165,11 @@ vector<string> translate_line(string line, long long index) {
 			}
 		}
 	}
+	else if (splited_line[0] == ".org") {
+		////int new_index = htoi(splited_line[1]);
+		cout << stoi(splited_line[1], 0, 16);
+		index= stoi(splited_line[1], 0, 16);
+	}
 	return translated_line;
 
 }
@@ -167,11 +180,12 @@ void prepare_lables(ifstream& Inst) {
 		if (line.empty())continue;
 		line = to_lower(line);
 		vector<string> splited_line = split_line(line);
-		if ((instructions.find(splited_line[0]) == instructions.end()) && (splited_line[1] == ":"))
+		if (splited_line.size() > 0 && (instructions.find(splited_line[0]) == instructions.end()) && (splited_line[1] == ":"))
 		{
 			labels.insert({ splited_line[0] ,to_string(index) });
 		}
-		index += 1;
+		else if (splited_line.size() > 0)
+			index += 1;
 	}
 }
 void fill_interrupt(ofstream& MemFile) {
@@ -188,7 +202,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 	string line;
 	while (getline(Inst, line)) {
 		line = to_lower(line);
-		vector<string> out = translate_line(line, index);
+		vector<string> out = translate_line(line);
 		for (int i = 0; i < out.size(); i++) {
 			//MemFile << translate_line_index(index) + ":\t\t" + out[i] << endl;
 			memory[index] = translate_line_index(index) + ":\t\t" + out[i];
