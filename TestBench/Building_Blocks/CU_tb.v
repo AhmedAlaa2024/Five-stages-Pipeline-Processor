@@ -79,6 +79,7 @@ module CU_tb;
 	wire stack_operation;
 	wire push_pop;
 	wire pass_immediate;
+	wire write_sp;	
 	wire [3:0] alu_function;
 	
 	CU cu(opcode,
@@ -93,6 +94,7 @@ module CU_tb;
 		stack_operation,
 		push_pop,
 		pass_immediate,
+		write_sp,
 		alu_function);
 
 	initial begin
@@ -111,6 +113,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == NOP_ALU) 
 		begin
 			$display("PASS NOP");	
@@ -135,6 +138,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == SETC_ALU) 
 		begin
 			$display("PASS SETC");	
@@ -158,6 +162,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == CLRC_ALU) 
 		begin
 			$display("PASS CLRC");	
@@ -183,6 +188,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == NOT_ALU) 
 		begin
 			$display("PASS NOT");	
@@ -207,6 +213,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == INC_ALU) 
 		begin
 			$display("PASS INC");	
@@ -231,6 +238,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == DEC_ALU) 
 		begin
 			$display("PASS DEC");	
@@ -256,6 +264,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == OUT_ALU) 
 		begin
 			$display("PASS OUT");	
@@ -280,6 +289,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == IN_ALU) 
 		begin
 			$display("PASS IN");	
@@ -303,6 +313,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == MOV_ALU) 
 		begin
 			$display("PASS MOV");	
@@ -326,6 +337,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == ADD_ALU) 
 		begin
 			$display("PASS ADD");	
@@ -350,6 +362,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == SUB_ALU) 
 		begin
 			$display("PASS SUB");	
@@ -373,6 +386,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == AND_ALU) 
 		begin
 			$display("PASS AND");	
@@ -396,6 +410,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == OR_ALU) 
 		begin
 			$display("PASS OR");	
@@ -419,6 +434,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == SHL_ALU) 
 		begin
 			$display("PASS SHL");	
@@ -442,6 +458,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == SHR_ALU) 
 		begin
 			$display("PASS SHR");	
@@ -465,6 +482,7 @@ module CU_tb;
 		stack_operation == 1&&
 		push_pop == 1&&
 		pass_immediate == 0&&
+		write_sp == 1&&
 		alu_function == PUSH_ALU) 
 		begin
 			$display("PASS PUSH");	
@@ -488,6 +506,7 @@ module CU_tb;
 		stack_operation == 1&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 1&&
 		alu_function == POP_ALU) 
 		begin
 			$display("PASS POP");	
@@ -510,6 +529,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 1&&
+		write_sp == 0&&
 		alu_function == LDM_ALU) 
 		begin
 			$display("PASS LDM");	
@@ -533,6 +553,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == LDD_ALU) 
 		begin
 			$display("PASS LDD");	
@@ -555,6 +576,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == STD_ALU) 
 		begin
 			$display("PASS STD");	
@@ -577,6 +599,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == JZ_ALU) 
 		begin
 			$display("PASS JZ");	
@@ -599,6 +622,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == JN_ALU) 
 		begin
 			$display("PASS JN");	
@@ -621,6 +645,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == JC_ALU) 
 		begin
 			$display("PASS JC");	
@@ -643,6 +668,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == JMP_ALU) 
 		begin
 			$display("PASS JMP");	
@@ -665,6 +691,7 @@ module CU_tb;
 		stack_operation == 0&&
 		push_pop == 0&&
 		pass_immediate == 0&&
+		write_sp == 0&&
 		alu_function == CALL_ALU) 
 		begin
 			$display("PASS CALL");	
