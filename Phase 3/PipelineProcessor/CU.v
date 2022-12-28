@@ -53,7 +53,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter SHL_ALU = 4'b1100;
 	parameter SHR_ALU = 4'b1101;
 
-	parameter PUSH_ALU = 4'b0100;
+	parameter PUSH_ALU = 4'b0100; // Edited ,should be operand2 0100
 	parameter POP_ALU = 4'b0000;
 	parameter LDM_ALU = 4'b0011;
 	parameter LDD_ALU = 4'b0011;
