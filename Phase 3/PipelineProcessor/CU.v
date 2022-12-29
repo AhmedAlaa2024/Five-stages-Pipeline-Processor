@@ -1,5 +1,5 @@
 
-module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
+module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
 	//********* Start Opcodes of instructions ***********//
 	parameter NOP_OP = 9'b0;
 	parameter SETC_OP = 9'b1;
@@ -105,6 +105,18 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 		ret = 0;
 		call = 0;
 		branch_type = 0;
+		if (int_flag == 1)
+			begin
+				/* ICU will take the control over them, so I drive floating signals on them, to drive them safely */
+				alu_function = 4'bz;
+				branch = 1'bz;
+				data_read = 1'bz;
+				data_write = 1'bz;
+				DMW = 1'bz;
+				stack_operation = 1'bz;
+				push_pop = 1'bz;
+				write_sp = 1'bz;
+			end
 		case(opcode)
 			NOP_OP: begin
 				alu_function = NOP_ALU;
@@ -243,6 +255,11 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 			RTI_OP: begin
 				alu_function = RTI_ALU;
 				rti = 1;
+				branch = 1;
+				data_write = 1;
+				DMR = 1;
+				stack_operation = 1;
+				write_sp = 1;
 			end
 		endcase
 	end		
