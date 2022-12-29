@@ -151,11 +151,14 @@ vector<string> translate_line(string line) {
 			{
 				instruction_line += (regesters[splited_line[1]]);
 			}
-			else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0") {
+			/*else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0") 
+			{
 				instruction_line += (regesters[splited_line[1]]);
-			}
-			else {
-				instruction_line += "000";
+			}*/
+			else 
+			{
+				instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+				//instruction_line += "000";
 			}
 			instruction_line += "0";
 			instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
@@ -194,7 +197,7 @@ void fill_interrupt(ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;
-		memory[index] =  "0000000000000000";
+		memory[index] = "0000000000000000";
 
 		index += 1;
 	}
@@ -217,7 +220,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;;
-		memory[index] =  "0000000000000000";
+		memory[index] = "0000000000000000";
 		index += 1;
 	}
 	MemFile << "// memory data file (do not edit the following line - required for mem load use)\n" <<
@@ -229,7 +232,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 
 	}
 
-	MemFile << translate_line_index(0) + ":\t\t"<<memory[0];
+	MemFile << translate_line_index(0) + ":\t\t" << memory[0];
 
 }
 string translate_line_index(long long index) {
