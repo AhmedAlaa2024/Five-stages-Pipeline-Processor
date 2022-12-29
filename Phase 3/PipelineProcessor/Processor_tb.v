@@ -26,7 +26,8 @@ module Processor_tb;
 		#PERIOD;
 		#PERIOD;
 		#PERIOD;
-
+		#PERIOD;
+		#PERIOD;
 		/**** Start ****/
 		// First initialize your variables
 

@@ -15,7 +15,7 @@ always @(posedge clk)
         // Active low reset
         if (!reset)
             begin
-                FD_PIPELINE_REG = 0;
+                FD_PIPELINE_REG = 15;
             end
         // Synchronous write @ +ve edge
         else
