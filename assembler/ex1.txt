@@ -1,6 +1,7 @@
 #this is a comment 
 #all numbers are in hexadecimal
 #the reset signal is raised before this code is executed and the flags and the registers 
+Jz r2
 .org 0
 .org 20
 .org a
