@@ -19,6 +19,8 @@ module CU_tb;
 	parameter OR_OP = 9'b010_000100;
 	parameter SHL_OP = 9'b010_000101;
 	parameter SHR_OP = 9'b010_000110;
+	parameter SHL_IMM_OP = 9'b010_000111;
+	parameter SHR_IMM_OP = 9'b010_001000;
 
 	parameter PUSH_OP = 9'b011_000000;
 	parameter POP_OP = 9'b011_000001;
@@ -53,6 +55,8 @@ module CU_tb;
 	parameter OR_ALU = 4'b1011;
 	parameter SHL_ALU = 4'b1100;
 	parameter SHR_ALU = 4'b1101;
+	parameter SHL_IMM_ALU = 4'b1100;
+	parameter SHR_IMM_ALU = 4'b1101;
 
 	parameter PUSH_ALU = 4'b0100;
 	parameter POP_ALU = 4'b0000;
@@ -60,15 +64,16 @@ module CU_tb;
 	parameter LDD_ALU = 4'b0011;
 	parameter STD_ALU = 4'b0011;
 
-	parameter JZ_ALU = 4'b0100;
-	parameter JN_ALU = 4'b0100;
-	parameter JC_ALU = 4'b0100;
-	parameter JMP_ALU = 4'b0100;
+	parameter JZ_ALU = 4'b0011; // Edited move operand 1
+	parameter JN_ALU = 4'b0011; // Edited move operand 1
+	parameter JC_ALU = 4'b0011; // Edited move operand 1
+	parameter JMP_ALU = 4'b0011; // Edited move operand 1
 	parameter CALL_ALU = 4'b0100;
 	parameter RET_ALU = 4'b0000;
 	parameter RTI_ALU = 4'b0000;
 	//********* End ALU functions of instructions ***********//
-
+	
+	reg int_flag;
 	reg [8:0] opcode;
 	wire branch;
 	wire data_read;
@@ -89,6 +94,7 @@ module CU_tb;
 	wire [1:0]branch_type;
 	
 	CU cu(opcode,
+		int_flag,
 		branch,
 		data_read,
 		data_write,
@@ -108,6 +114,7 @@ module CU_tb;
 		branch_type);
 
 	initial begin
+		int_flag = 0;
 		// Test NOP_OP
 		opcode = NOP_OP;
 		#10;
@@ -861,6 +868,60 @@ module CU_tb;
 		end else 
 		begin
 			$display("FAILED RTI");	
+		end
+		// Test SHL_IMM_OP
+		opcode = SHL_IMM_OP;
+		#10;
+		if(
+		branch == 0 &&
+		data_read == 1 &&
+		data_write == 1 &&
+		DMR == 0&&
+		DMW == 0&&
+		IOE == 0&&
+		IOR == 0&&
+		IOW == 0&&
+		stack_operation == 0&&
+		push_pop == 0&&
+		pass_immediate == 1&&
+		write_sp == 0&&
+		alu_function == SHL_IMM_ALU&&
+		call == 0&&
+		ret == 0&&
+		rti == 0&&
+		branch_type == 0)  
+		begin
+			$display("PASS SHL IM");	
+		end else 
+		begin
+			$display("FAILED SHL IM");	
+		end
+		// Test SHR_IMM_OP
+		opcode = SHR_IMM_OP;
+		#10;
+		if(
+		branch == 0 &&
+		data_read == 1 &&
+		data_write == 1 &&
+		DMR == 0&&
+		DMW == 0&&
+		IOE == 0&&
+		IOR == 0&&
+		IOW == 0&&
+		stack_operation == 0&&
+		push_pop == 0&&
+		pass_immediate == 1&&
+		write_sp == 0&&
+		alu_function == SHR_IMM_ALU&&
+		call == 0&&
+		ret == 0&&
+		rti == 0&&
+		branch_type == 0) 
+		begin
+			$display("PASS SHR IM");	
+		end else 
+		begin
+			$display("FAILED SHR IM");	
 		end
 		$finish;	
 	end	
