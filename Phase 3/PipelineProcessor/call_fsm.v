@@ -1,31 +1,43 @@
-module call_fsm(reset,call,clk,out,stall);
+module call_fsm(reset,call,clk,rdst_value,out,pc,stall);
 
-parameter PUSH_PC_LOW = 16'b01;
-parameter PUSH_PC_HIGH = 16'b10;
-parameter MOV_PC_LOW = 16'b11;
-parameter MOV_PC_HIGH = 16'b100;
+parameter PUSH_PC_LOW = 2'b00;
+parameter PUSH_PC_HIGH = 2'b01;
+
+parameter PUSH_PC_LOW_OP = 16'b0110000000001000;
+parameter PUSH_PC_HIGH_OP = 16'b0110000000001001;
 
 input call,clk,reset;
-output [15:0]out;
+input [15:0]rdst_value;
+output reg [15:0]out;
 output reg stall;
+output [31:0]pc;
 
-reg [15:0]current_state;
-reg [15:0]next_state;
+reg current_state;
+reg next_state;
+reg [15:0]rdst_reg;
 
+assign pc = {16'b0,rdst_reg};
 
-assign out = current_state;
 always @(posedge clk) begin
 	if(!reset)begin 
 		current_state = PUSH_PC_LOW;
 		next_state = PUSH_PC_LOW;
 		stall = 0;
+		rdst_reg = 0;
 	end
 	current_state = next_state;
 	if(call) begin
+		rdst_reg = rdst_value;
 		next_state = PUSH_PC_HIGH;
 		stall = 1;
-	end else begin
 	end
+
+	case (current_state)
+		PUSH_PC_LOW: 
+			out = PUSH_PC_LOW_OP;
+		PUSH_PC_HIGH:
+			out = PUSH_PC_HIGH_OP;
+	endcase
 
 end
 
@@ -34,14 +46,10 @@ always @(current_state)begin
 		PUSH_PC_LOW: begin
 			next_state = PUSH_PC_LOW;
 			stall = 0;
+			rdst_reg = 0;
 		end
 		PUSH_PC_HIGH:
-			next_state = MOV_PC_LOW;
-		MOV_PC_LOW:
-			next_state = MOV_PC_HIGH;
-		MOV_PC_HIGH: begin 
 			next_state = PUSH_PC_LOW;
-		end
 	endcase
 end
 
