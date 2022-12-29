@@ -11,8 +11,9 @@ reg [15:0]rdst_value;
 wire [15:0]out;
 wire stall;
 wire [31:0] pc;
+wire change_pc_call;
 
-call_fsm callfsm(reset,call,clk,rdst_value,out,pc,stall);
+call_fsm callfsm(reset,call,clk,rdst_value,out,pc,stall,change_pc_call);
 always #10 clk = ~clk;
 
 initial begin
@@ -26,34 +27,39 @@ initial begin
 	call = 1;
 	rdst_value = 16'b0000_1111_0000_1111;
 	#20;
-	if(out == PUSH_PC_LOW_OP && stall == 1 && pc == 16'b0000_1111_0000_1111)
+	if(out == PUSH_PC_LOW_OP && stall == 1 && pc == 16'b0000_1111_0000_1111 && change_pc_call==0)
 		$display("PASS 1");
 	else 
 		$display("FALID %d",out);
 	call = 0;
 	rdst_value = 0;
 	#20;
-	if(out == PUSH_PC_HIGH_OP && stall == 1 && pc == 16'b0000_1111_0000_1111)
+	if(out == PUSH_PC_HIGH_OP && stall == 1 && pc == 16'b0000_1111_0000_1111 && change_pc_call==0)
 		$display("PASS 2");
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0)
+	if(change_pc_call==1)
+		$display("PASS change_pc_call");
+	else 
+		$display("FALID  change_pc_call %d",out);
+	#20;
+	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0 && change_pc_call==0)
 		$display("PASS no call");
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0)
+	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0 && change_pc_call==0)
 		$display("PASS no call");
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0)
+	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0 && change_pc_call==0)
 		$display("PASS no call");
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0)
+	if(out == PUSH_PC_LOW_OP && stall == 0 && pc == 16'b0 && change_pc_call==0)
 		$display("PASS no call");
 	else 
 		$display("FALID %d",out);
@@ -70,6 +76,11 @@ initial begin
 		$display("PASS 2");
 	else 
 		$display("FALID %d",out);
+	#20;
+	if(change_pc_call==1)
+		$display("PASS change_pc_call");
+	else 
+		$display("FALID  change_pc_call %d",out);
 	#20;
 	$finish;
 end
