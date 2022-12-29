@@ -51,10 +51,16 @@ wire call;
 wire [1:0]branch_type;
 wire [20:0] control_signals_IN,control_signals_OUT;
 
+
 // Call signals
 wire [15:0]call_fsm_instruction,IR_in_call;
 wire [31:0]call_pc,PC_call;
 wire call_stall,change_pc_call;
+
+// Ret signals
+wire [15:0]ret_fsm_instruction;
+wire ret_stall;
+wire [15:0]IR_in_ret;
 
 //------------------------------------- Execution Stage  ------------------------------------- 
 
@@ -121,11 +127,13 @@ wire [15:0] write_back_output_IO;
 InstrMem #(16, 21) InstrCache (clk, PC_in[20:0], IR_in, reset);
 
 // increment pcin , pcout = pcin + 1
-Incrementor  #(32) PC_INC(.in(PC_in),.en(!loadUseStall & !call_stall & !call),.out(PC_out));
+Incrementor  #(32) PC_INC(.in(PC_in),.en(!loadUseStall & !call_stall & !call & !ret_stall & !ret),.out(PC_out));
 
 mux #(16) callMux (.in1(call_fsm_instruction),.in2(IR_in), .out(IR_in_call), .sel(call_stall) );
 
-FD_pipeline_register FD_pipe (IR_in_call, IR_out, clk, reset & !branch_taken & !call,!loadUseStall);
+mux #(16) retMux (.in1(ret_fsm_instruction),.in2(IR_in_call), .out(IR_in_ret), .sel(ret_stall) );
+
+FD_pipeline_register FD_pipe (IR_in_ret, IR_out, clk, reset & !branch_taken & !call & !ret,!loadUseStall);
 
 //---------------------------------------- Decode Stage  -------------------------------------------------
 
@@ -135,7 +143,7 @@ FD_pipeline_register FD_pipe (IR_in_call, IR_out, clk, reset & !branch_taken & !
 */
 
 assign opcode[8:0] = IR_out[15:7];
-CU  ControlUnit (opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
+CU  ControlUnit (opcode,1'b0,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
 
 //CU ControlUnit (opcode, mem_en, rw, data_read, data_write, alu_function);
 /*
@@ -292,4 +300,11 @@ call_fsm callFsm(.reset(reset),
     .pc(call_pc),
     .stall(call_stall),
     .change_pc_call(change_pc_call));
+
+
+ret_fsm retFsm(.reset(reset),
+               .ret(ret),
+               .clk(clk),
+               .out(ret_fsm_instruction),
+               .stall(ret_stall));
 endmodule

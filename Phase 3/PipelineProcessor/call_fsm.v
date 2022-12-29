@@ -44,8 +44,10 @@ always @(posedge clk) begin
 			out = PUSH_PC_LOW_OP;
 		PUSH_PC_HIGH:
 			out = PUSH_PC_HIGH_OP;
-		CHANGE_PC_CALL:
+		CHANGE_PC_CALL: begin
 			change_pc_call = 1'b1;
+			out = 16'b0;
+		end
 	endcase
 
 end

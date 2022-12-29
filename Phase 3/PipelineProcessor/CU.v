@@ -69,6 +69,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	//********* End ALU functions of instructions ***********//
 	//,,,,,,,,,alu_function
 	input [8:0] opcode;
+	input int_flag;
 	output reg branch;
 	output reg data_read;
 	output reg data_write;

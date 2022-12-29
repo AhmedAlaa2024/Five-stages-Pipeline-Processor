@@ -39,7 +39,7 @@ initial begin
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(change_pc_call==1)
+	if(out == 16'b0 && change_pc_call==1)
 		$display("PASS change_pc_call");
 	else 
 		$display("FALID  change_pc_call %d",out);
@@ -77,7 +77,7 @@ initial begin
 	else 
 		$display("FALID %d",out);
 	#20;
-	if(change_pc_call==1)
+	if(out == 16'b0 && change_pc_call==1)
 		$display("PASS change_pc_call");
 	else 
 		$display("FALID  change_pc_call %d",out);
