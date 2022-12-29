@@ -51,6 +51,10 @@ wire call;
 wire [1:0]branch_type;
 wire [20:0] control_signals_IN,control_signals_OUT;
 
+// Call signals
+wire [15:0]call_fsm_instruction,IR_in_call;
+wire [31:0]call_pc,PC_call;
+wire call_stall,change_pc_call;
 
 //------------------------------------- Execution Stage  ------------------------------------- 
 
@@ -117,8 +121,11 @@ wire [15:0] write_back_output_IO;
 InstrMem #(16, 21) InstrCache (clk, PC_in[20:0], IR_in, reset);
 
 // increment pcin , pcout = pcin + 1
-Incrementor  #(32) PC_INC(.in(PC_in),.en(!loadUseStall),.out(PC_out));
-FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset & !branch_taken,!loadUseStall);
+Incrementor  #(32) PC_INC(.in(PC_in),.en(!loadUseStall & !call_stall & !call),.out(PC_out));
+
+mux #(16) callMux (.in1(call_fsm_instruction),.in2(IR_in), .out(IR_in_call), .sel(call_stall) );
+
+FD_pipeline_register FD_pipe (IR_in_call, IR_out, clk, reset & !branch_taken & !call,!loadUseStall);
 
 //---------------------------------------- Decode Stage  -------------------------------------------------
 
@@ -148,7 +155,7 @@ assign Opd2_Add =  IR_out[6:4];    // source
 
 regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(control_signals_OUT[4]),
      .Src1(Src1),.Src2(Src2),.read_sp(SP_value_in),.read_pc(PC_in),.read_ccr(read_ccr),
-     .write_sp_data(SP_address) , .write_pc_data(PC_branch) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
+     .write_sp_data(SP_address) , .write_pc_data(PC_call) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
       .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(reg_dst_num_OUT_WB),.en(loadUseStall));
 
 assign control_signals_IN = {rti,ret,call,branch_type,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
@@ -191,6 +198,7 @@ BranchUnit BU (.CCR(read_ccr[3:0]) ,.branch(control_signals_OUT[15]) ,.jmp_type(
 
 mux #(32) branch_mux (.in1({16'b0,result}),.in2(PC_out), .out(PC_branch), .sel(branch_taken) );
 
+mux #(32) call_mux (.in1(call_pc),.in2(PC_branch), .out(PC_call), .sel(change_pc_call) );
 
 
 
@@ -275,4 +283,13 @@ IO io(.Result(result_OUT_Data),
     .IOE(control_signals_OUT_Data[10]),
     .reset(reset),
     .clk(clk));
+
+call_fsm callFsm(.reset(reset),
+    .call(call),
+    .clk(clk),
+    .rdst_value(Src1),
+    .out(call_fsm_instruction),
+    .pc(call_pc),
+    .stall(call_stall),
+    .change_pc_call(change_pc_call));
 endmodule
