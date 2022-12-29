@@ -13,7 +13,7 @@ unordered_map<string, string> regesters;
 unordered_map<string, vector<string>> instructions;
 unordered_map<string, string>labels;
 string hexa_index[] = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F" };
-vector<string> memory(1 << 20, "");
+vector<string> memory(1 << 20, "0000000000000000");
 /// <summary>
 /// 
 /// </summary>
@@ -150,19 +150,29 @@ vector<string> translate_line(string line) {
 			if (inst[1] == "1" && inst[3] == "0")
 			{
 				instruction_line += (regesters[splited_line[1]]);
+				instruction_line += "0";
+				instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+
 			}
-			else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0") {
+			/*else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0")
+			{
 				instruction_line += (regesters[splited_line[1]]);
+			}*/
+			else
+			{
+				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
+				instruction_line += "0";
+				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
+
+				//instruction_line += "000";
 			}
-			else {
-				instruction_line += "000";
-			}
-			instruction_line += "0";
+			/*instruction_line += "0";
 			instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+			*/
 			translated_line.push_back(instruction_line);
 			if (inst[3] == "1")
 			{
-				translated_line.push_back(convert_to_binary(stoi(splited_line[1]), 16));
+				translated_line.push_back(convert_to_binary(stoi(splited_line.size() == 3 ? splited_line[2] : splited_line[1]), 16));
 			}
 		}
 	}
@@ -194,7 +204,7 @@ void fill_interrupt(ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;
-		memory[index] = translate_line_index(index) + ":\t\t" + "0000000000000000";
+		memory[index] = "0000000000000000";
 
 		index += 1;
 	}
@@ -206,7 +216,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 		vector<string> out = translate_line(line);
 		for (int i = 0; i < out.size(); i++) {
 			//MemFile << translate_line_index(index) + ":\t\t" + out[i] << endl;
-			memory[index] = translate_line_index(index) + ":\t\t" + out[i];
+			memory[index] = out[i];
 			index += 1;
 		}
 	}
@@ -217,7 +227,7 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 	while (index < size)
 	{
 		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;;
-		memory[index] = translate_line_index(index) + ":\t\t" + "0000000000000000";
+		memory[index] = "0000000000000000";
 		index += 1;
 	}
 	MemFile << "// memory data file (do not edit the following line - required for mem load use)\n" <<
@@ -225,11 +235,11 @@ void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
 		"// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1\n";
 	for (int i = ((1 << 20) - 1); i > 0; i--)
 	{
-		MemFile << memory[i] << endl;
+		MemFile << translate_line_index(i) + ":\t\t" << memory[i] << endl;
 
 	}
 
-	MemFile << memory[0];
+	MemFile << translate_line_index(0) + ":\t\t" << memory[0];
 
 }
 string translate_line_index(long long index) {
