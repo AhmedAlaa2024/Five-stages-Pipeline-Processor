@@ -1,13 +1,13 @@
 // memory data file (do not edit the following line - required for mem load use)
 // instance=/Processor_tb/processor/registers/general_regester
 // format=mti addressradix=d dataradix=u version=1.0 wordsperline=1
-0:   218
-1:     4
-2:     6
-3:     0
+0:     0
+1:   116
+2:    25
+3: 65535
 4:     0
-5:     0
-6:     0
+5: 65535
+6:   116
 7:     0
-8:    85
+8:   106
 9:     0

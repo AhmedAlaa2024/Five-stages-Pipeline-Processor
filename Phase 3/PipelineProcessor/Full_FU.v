@@ -29,7 +29,7 @@ always @ (*)
                         Actual_Src_1_VALUE = Old_Dst_2_VALUE;
                         forwardSrc1  =1'b1;
                     end
-                else if (Old_Dst_2_NUM == Current_Src_2_NUM) // removed else
+                if (Old_Dst_2_NUM == Current_Src_2_NUM) // removed else
                     begin
                         Actual_Src_2_VALUE = Old_Dst_2_VALUE;
                         forwardSrc2  =1'b1;
@@ -40,7 +40,7 @@ always @ (*)
                         Actual_Src_1_VALUE = Old_Dst_1_VALUE;
                         forwardSrc1  =1'b1;
                     end
-                else if (Old_Dst_1_NUM == Current_Src_2_NUM) // removed else
+                if (Old_Dst_1_NUM == Current_Src_2_NUM) // removed else
                     begin
                         Actual_Src_2_VALUE = Old_Dst_1_VALUE;
                         forwardSrc2  =1'b1;
