@@ -9,9 +9,9 @@ module DE_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 16) (control_si
                              SP_value_IN, SP_value_OUT,
                              clk, reset,en);
 
-input [NUMBER_CONTROL_SIGNALS-1:0] control_sinals_IN;
-output [NUMBER_CONTROL_SIGNALS-1:0] control_sinals_OUT;
-reg [NUMBER_CONTROL_SIGNALS-1:0] control_sinals_REG;
+input [20:0] control_sinals_IN;
+output [20:0] control_sinals_OUT;
+reg [20:0] control_sinals_REG;
 
 input [3:0] reg_dst_num_IN;
 output [3:0] reg_dst_num_OUT;

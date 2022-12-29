@@ -29,7 +29,11 @@ wire push_pop;
 wire pass_immediate;
 wire write_sp;
 wire [3:0] alu_function;
-wire [15:0] control_signals_IN,control_signals_OUT;
+wire rti;
+wire ret;
+wire call;
+wire [1:0]branch_type;
+wire [20:0] control_signals_IN,control_signals_OUT;
 
 //------------------------------------- DE Pipeline Signals
 wire [3:0] reg_dst_num_OUT;
@@ -67,7 +71,7 @@ wire [15:0] Actual_Src_1_VALUE,Actual_Src_2_VALUE;
 wire [15:0] forwardSrc1_VALUE,forwardSrc2_VALUE;
 
 //------------------------------------- EM Pipeline Signals
-wire [15:0] control_signals_OUT_Data;
+wire [20:0] control_signals_OUT_Data;
 wire [15:0] result_OUT_Data;
 wire [15:0] address_OUT_Data;
 wire [3:0] reg_dst_num_OUT_Data;
@@ -78,7 +82,7 @@ wire [31:0] sp_Reg_OUT_Data;
 
 
 //---------------------------------- MW Pipeline signals
-wire [15:0] control_signals_OUT_WB;
+wire [20:0] control_signals_OUT_WB;
 wire [15:0] result_OUT_WB;
 wire [3:0] reg_dst_num_OUT_WB;
 wire [15:0] reg_dst_value_OUT_WB;
@@ -120,7 +124,7 @@ FD_pipeline_register FD_pipe (IR_in, IR_out, clk, reset,!loadUseStall);
 */
 
 assign opcode[8:0] = IR_out[15:7];
-CU  ControlUnit (opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function);
+CU  ControlUnit (opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
 
 //CU ControlUnit (opcode, mem_en, rw, data_read, data_write, alu_function);
 /*
@@ -143,7 +147,7 @@ regFile #(16,5,8) registers (.Data_write1(control_signals_OUT_WB[13]),.sp_write(
      .write_sp_data(SP_address) , .write_pc_data(PC_out) , .write_ccr(write_ccr),.write_data1(result_OUT_WB),
       .clk(clk),.rst(reset),.Opd1_Add(Opd1_Add),.Opd2_Add(Opd2_Add),.write_addr1(reg_dst_num_OUT_WB),.en(loadUseStall));
 
-assign control_signals_IN = {branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
+assign control_signals_IN = {rti,ret,call,branch_type,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function};
 
 /*
                 Src1 -> is Destination which is operand2 in alu
