@@ -135,14 +135,15 @@ vector<string> translate_line(string line) {
 	{
 		vector<string> inst = instructions[splited_line[0]];
 		instruction_line = inst[0];
-		if (splited_line[0] == "jz" || splited_line[0] == "jn" || splited_line[0] == "jc" || splited_line[0] == "jo" || splited_line[0] == "jmp" || splited_line[0] == "jmpi" || splited_line[0] == "call" || splited_line[0] == "calli") {
-			if (splited_line[0] == "jmpi" || splited_line[0] == "calli") {
+		if (splited_line[0].compare("jz") == 0 || splited_line[0].compare("jn") == 0 || splited_line[0].compare("jc") == 0 || splited_line[0].compare("jo") == 0 || splited_line[0].compare("jmp") == 0
+			|| splited_line[0].compare("jmpi") == 0 || splited_line[0].compare("call") == 0 || splited_line[0].compare("calli") == 0) {
+			if (splited_line[0].compare("jmpi") == 0 || splited_line[0].compare("calli") == 0) {
 
 				translated_line.push_back(instruction_line + "0000000");
 				translated_line.push_back(convert_to_binary(stoi(labels[splited_line[1]]), 16));
 			}
 			else {
-				translated_line.push_back(instruction_line + "000" + regesters[splited_line[1]]);
+				translated_line.push_back(instruction_line + "0000" + regesters[splited_line[1]]);
 			}
 		}
 		else {
@@ -168,7 +169,7 @@ vector<string> translate_line(string line) {
 	else if (splited_line[0] == ".org") {
 		////int new_index = htoi(splited_line[1]);
 		cout << stoi(splited_line[1], 0, 16);
-		index= stoi(splited_line[1], 0, 16);
+		index = stoi(splited_line[1], 0, 16);
 	}
 	return translated_line;
 

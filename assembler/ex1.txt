@@ -1,5 +1,14 @@
-not r0
+#this is a comment 
+#all numbers are in hexadecimal
+#the reset signal is raised before this code is executed and the flags and the registers 
+Jz r2
+.org 0
+.org 20
+.org a
+are set to zeros.
+not r0 #this is comment
 std r0,r1
 ldd r2,r1
 inc r1
 jz r2
+
