@@ -150,22 +150,29 @@ vector<string> translate_line(string line) {
 			if (inst[1] == "1" && inst[3] == "0")
 			{
 				instruction_line += (regesters[splited_line[1]]);
+				instruction_line += "0";
+				instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+
 			}
-			/*else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0") 
+			/*else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0")
 			{
 				instruction_line += (regesters[splited_line[1]]);
 			}*/
-			else 
+			else
 			{
-				instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
+				instruction_line += "0";
+				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
+
 				//instruction_line += "000";
 			}
-			instruction_line += "0";
+			/*instruction_line += "0";
 			instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
+			*/
 			translated_line.push_back(instruction_line);
 			if (inst[3] == "1")
 			{
-				translated_line.push_back(convert_to_binary(stoi(splited_line[1]), 16));
+				translated_line.push_back(convert_to_binary(stoi(splited_line.size() == 3 ? splited_line[2] : splited_line[1]), 16));
 			}
 		}
 	}
