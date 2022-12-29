@@ -66,11 +66,11 @@ always @(posedge clk)
         if (!reset)
             begin
                 control_sinals_REG = 0;
-                reg_dst_num_REG = 0;
+                reg_dst_num_REG = 15;
                 reg_dst_value_REG = 0;
                 reg_src_1_num_REG = 0;
                 reg_src_1_value_REG = 0;
-                reg_src_2_num_REG = 0;
+                reg_src_2_num_REG = 15;
                 reg_src_2_value_REG = 0;
                 address_REG = 0;
                 SP_value_REG = 0;

@@ -59,7 +59,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter LDD_ALU = 4'b0011;
 	parameter STD_ALU = 4'b0011;
 
-	parameter JZ_ALU = 4'b0100;
+	parameter JZ_ALU = 4'b0011; // Edited move operand 1
 	parameter JN_ALU = 4'b0100;
 	parameter JC_ALU = 4'b0100;
 	parameter JMP_ALU = 4'b0100;

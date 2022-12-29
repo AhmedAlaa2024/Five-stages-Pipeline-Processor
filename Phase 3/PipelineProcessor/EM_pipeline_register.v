@@ -4,6 +4,7 @@ module EM_pipeline_register #(parameter NUMBER_CONTROL_SIGNALS = 16) (control_si
                              reg_dst_num_IN, reg_dst_num_OUT,
                              reg_dst_value_IN, reg_dst_value_OUT,
                              sp_Reg_IN, sp_Reg_OUT,
+                             CCR_Reg_IN,CCR_Reg_OUT,
                              clk, reset);
 
 input [20:0] control_sinals_IN;
@@ -29,6 +30,10 @@ reg [15:0] reg_dst_value_REG;
 input [31:0] sp_Reg_IN;
 output [31:0] sp_Reg_OUT;
 reg [31:0] sp_Reg_REG;
+
+input [4:0] CCR_Reg_IN;
+output [4:0] CCR_Reg_OUT;
+reg [4:0] CCR_Reg_REG;
 
 input clk;
 input reset;
