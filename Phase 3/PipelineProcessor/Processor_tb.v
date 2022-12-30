@@ -33,6 +33,8 @@ module Processor_tb;
 		int = 1'b1;
 		#PERIOD;
 		int = 1'b0;
+		#(PERIOD*7);
+		int = 1'b1;
 		#(PERIOD*50);
 		/**** Start ****/
 		// First initialize your variables
