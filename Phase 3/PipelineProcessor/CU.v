@@ -272,11 +272,6 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 			RTI_OP: begin
 				alu_function = RTI_ALU;
 				rti = 1;
-				branch = 1;
-				data_write = 1;
-				DMR = 1;
-				stack_operation = 1;
-				write_sp = 1;
 			end
 		endcase
 	end		

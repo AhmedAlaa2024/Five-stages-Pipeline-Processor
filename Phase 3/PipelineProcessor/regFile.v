@@ -13,9 +13,9 @@ output  [31:0] read_sp,read_pc;
 output [CCR_SIZE-1 : 0] read_ccr;
 
 //assuem rst , read_enable and Data_write1 is active heigh
-reg [REG_SIZE-1:0] general_regester[0:(REG_NUMBER-1 + 2)];
+reg [REG_SIZE-1:0] general_regester[0:(REG_NUMBER-1 + 3)];
 reg [31:0] SP ;
-reg [CCR_SIZE-1 : 0]CCR;
+//reg [CCR_SIZE-1 : 0]CCR;
 
 
 assign Src1 = general_regester[Opd1_Add];
@@ -23,7 +23,7 @@ assign Src2 = general_regester[Opd2_Add];
 assign read_sp = SP;
 assign read_pc[31:16]= general_regester[REG_NUMBER+1]  ;
 assign read_pc[15:0]=general_regester[REG_NUMBER];
-assign read_ccr=CCR;
+assign read_ccr=general_regester[REG_NUMBER+2][5:0];
 integer i;
 always @ (negedge clk)begin
 	//write in the posedge
@@ -63,7 +63,8 @@ always @(posedge clk) begin
 		// general_regester[REG_NUMBER] = write_pc_data[15:0];
 		// general_regester[REG_NUMBER+1] = write_pc_data[31:16];
 		//SP = 4095;
-		CCR=write_ccr;
+		//CCR=write_ccr;
+		general_regester[REG_NUMBER+2]=write_ccr;
 		if(en) begin
 			{general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]};
 		end 
@@ -73,9 +74,10 @@ always @(posedge clk) begin
 		end
 	end
 	if (rst == 0) begin
-		general_regester[REG_NUMBER] = 0;
+		general_regester[REG_NUMBER] = 32;
 		general_regester[REG_NUMBER+1] = 0;
-		CCR = 0;
+		general_regester[REG_NUMBER+2] = 0;
+		//CCR = 0;
 		// if( sp_write == 1 && rst != 0)begin
 		// 	SP=write_sp_data;
 		// end

@@ -12,7 +12,7 @@ parameter NOP_STATE_4 = 3'b110;
 
 parameter POP_PC_HIGH_OP = 16'b0110000010001001;
 parameter POP_PC_LOW_OP = 16'b0110000010001000;
-parameter POP_CCR_OP = 16'b1111_1111_1111_1111;
+parameter POP_CCR_OP = 16'b0110000010001010;
 
 input rti,clk,reset;
 

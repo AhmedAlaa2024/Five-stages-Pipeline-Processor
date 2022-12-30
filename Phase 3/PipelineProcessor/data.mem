@@ -2,7 +2,7 @@
 // instance=/Processor_tb/processor/DM/cache
 // format=mti addressradix=d dataradix=u version=1.0 wordsperline=1
 4095:     0
-4094:     0
+4094:    35
 4093:     0
 4092:     0
 4091:     0
@@ -4096,4 +4096,4 @@
    3:     0
    2:     0
    1:     0
-   0:   116
+   0:     0
