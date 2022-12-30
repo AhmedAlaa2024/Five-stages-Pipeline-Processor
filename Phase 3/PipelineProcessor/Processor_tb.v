@@ -9,7 +9,7 @@ module Processor_tb;
 	always #PERIOD clk=~clk;
 	Processor processor(clk,reset,portIn,portOut);
 	initial begin
-		portIn = 16'hDA;
+		portIn = 16'b0000_0000_0000_0101;
 		//Reset processor
 		clk=0;
 		reset = 1'b1;
@@ -19,15 +19,23 @@ module Processor_tb;
 		#PERIOD;
 		#PERIOD;
 		reset = 1'b1;
+		#PERIOD;
+		#PERIOD;
+		#PERIOD;
+		#PERIOD;
+		#PERIOD;
+		#PERIOD;
+		#PERIOD;
+		portIn = 16'h19;
+		#PERIOD;
+		#PERIOD;
+		portIn = 16'hffffff;
+		#PERIOD;
+		#PERIOD;
+		portIn = 16'hffff320;
+		#PERIOD;
+
 		#(PERIOD*100);
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
-		#PERIOD;
 		/**** Start ****/
 		// First initialize your variables
 
