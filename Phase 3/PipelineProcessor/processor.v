@@ -211,6 +211,7 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
 */
 mux #(16) forwardSrc1Mux (.in1(Actual_Src_1_VALUE),.in2(reg_src_1_value_OUT), .out(forwardSrc1_VALUE), .sel(forwardSrc1) );
 mux #(16) forwardSrc2Mux (.in1(Actual_Src_2_VALUE),.in2(reg_src_2_value_OUT), .out(forwardSrc2_VALUE), .sel(forwardSrc2) );
+mux #(16) imediate_shift(.in1(immediate_shift),.in2(forwardSrc1_VALUE), .out(final_Src), .sel(control_signals_OUT[5]) );
 
 stackAdder SP_Value(.stack_op(control_signals_OUT[7]),.push_pop(control_signals_OUT[6]),.in(SP_value_OUT),.out(SP_address));
 
