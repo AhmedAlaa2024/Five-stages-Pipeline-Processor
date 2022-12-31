@@ -29,7 +29,7 @@ wire [15:0] write_data1;
 wire [31:0] write_pc_data;
 wire [4:0]  write_ccr,write_back_ccr;
 
-wire [15:0] Src1,Src2;
+wire [15:0] Src1,Src2,final_Src;
 wire [31:0] read_pc;
 wire [4:0] read_ccr;
 // Control Unit Signals
@@ -89,6 +89,7 @@ wire [15:0] alu_address;
 wire [15:0] decode_address;
 wire [15:0] memory_address;
 wire [15:0] final_memory_address;
+wire [15:0] immediate_shift;
 wire [31:0] SP_value_OUT;
 wire [31:0] SP_address;
 wire [31:0] SP_corrected_address;
@@ -148,7 +149,7 @@ mux #(16) intMux (.in1(int_instruction),.in2(IR_in_ret), .out(IR_in_int), .sel(i
 
 mux #(16) rtiMux (.in1(rti_instruction),.in2(IR_in_int), .out(IR_in_rti), .sel(rti_stall) );
 
-FD_pipeline_register FD_pipe (IR_in_rti, IR_out, clk, reset & !branch_taken & !call & !ret & !rti,!loadUseStall);
+FD_pipeline_register FD_pipe (IR_in_rti, IR_out, clk, reset & !branch_taken & !call & !ret & !rti & !pass_immediate,!loadUseStall);
 
 //---------------------------------------- Decode Stage  -------------------------------------------------
 
@@ -198,6 +199,7 @@ DE_pipeline_register #(16) DE_pipe ( .control_sinals_IN(control_signals_IN), .co
                              .reg_src_2_value_IN(Src1), .reg_src_2_value_OUT(reg_src_2_value_OUT),
                              .address_IN(IR_in), .address_OUT(address_OUT),
                              .SP_value_IN(SP_value_in),.SP_value_OUT(SP_value_OUT),
+                             .immediate_IN(IR_in),.immediate_OUT(immediate_shift) ,
                              .clk(clk), .reset(reset & !branch_taken),.en(!loadUseStall));
 
 // or with reset signal pass_immediate signal to flush pipeline of immediate instruction
@@ -215,7 +217,7 @@ stackAdder SP_Value(.stack_op(control_signals_OUT[7]),.push_pop(control_signals_
 mux #(32) SP_mux (.in1(SP_value_OUT),.in2(SP_address), .out(SP_corrected_address), .sel(control_signals_OUT[6]) );
 
 
-ALU alu( .op1(forwardSrc1_VALUE), .op2(forwardSrc2_VALUE), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
+ALU alu( .op1(final_Src), .op2(forwardSrc2_VALUE), .func(control_signals_OUT[3:0]), .result(result),.inFlags(read_ccr) ,.outFlags(write_ccr) );
 
 BranchUnit BU (.CCR(read_ccr[3:0]) ,.branch(control_signals_OUT[15]) ,.jmp_type(control_signals_OUT[17:16]) ,.is_taken(branch_taken) );
 
@@ -229,7 +231,7 @@ mux #(32) int_mux (.in1(int_pc),.in2(PC_call), .out(PC_int), .sel(int_change_pc)
 
 
 // mux between address_OUT(immd) and Rsrc value not IR_in instead address_OUT
-mux #(16) address_load (.in1(IR_in),.in2(reg_src_1_value_OUT), .out(alu_address), .sel(control_signals_OUT[5]) );
+mux #(16) address_load (.in1(immediate_shift),.in2(reg_src_1_value_OUT), .out(alu_address), .sel(control_signals_OUT[5]) );
 
 EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .control_sinals_OUT(control_signals_OUT_Data),
                              .result_IN(result), .result_OUT(result_OUT_Data),
