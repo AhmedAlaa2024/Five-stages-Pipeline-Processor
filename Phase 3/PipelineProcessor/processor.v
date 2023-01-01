@@ -238,7 +238,7 @@ EM_pipeline_register #(16) EM_pipe (.control_sinals_IN(control_signals_OUT), .co
                              .result_IN(result), .result_OUT(result_OUT_Data),
                              .address_IN(alu_address), .address_OUT(address_OUT_Data),
                              .reg_dst_num_IN(reg_dst_num_OUT), .reg_dst_num_OUT(reg_dst_num_OUT_Data),
-                             .reg_dst_value_IN(reg_dst_value_OUT), .reg_dst_value_OUT(reg_dst_value_OUT_Data),
+                             .reg_dst_value_IN(forwardSrc2_VALUE), .reg_dst_value_OUT(reg_dst_value_OUT_Data), // reg_dst_value_OUT changed to forwardSrc2_VALUE
                              .sp_Reg_IN(SP_corrected_address), .sp_Reg_OUT(sp_Reg_OUT_Data),
                              .CCR_Reg_IN(write_ccr),.CCR_Reg_OUT(write_back_ccr),
                              .clk(clk), .reset(reset));

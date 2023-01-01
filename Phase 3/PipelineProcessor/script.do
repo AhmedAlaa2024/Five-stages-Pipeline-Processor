@@ -10,7 +10,7 @@ add wave -position end sim:/Processor_tb/processor/*
 
 
 
-mem load -i {E:\Education\Computer Engineering\Third Year\First Semester\Computer Archeticture\MIPS-Microprocessor-Design\Phase 3\PipelineProcessor\memory_fabonacci_program.mem} /Processor_tb/processor/InstrCache/cache
+mem load -i {D:\Material\3rd CMP\First term\Computer arch\Project\processor\memory_test.mem} /Processor_tb/processor/InstrCache/cache
 
 run
 
