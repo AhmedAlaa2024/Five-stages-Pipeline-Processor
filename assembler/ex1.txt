@@ -1,13 +1,28 @@
-.ORG 0 #this is the instructions code
-SHL r2,2
-IN R1                   #add 00000005 in R1
-IN R2                   #add 00000019 in R2
-IN R3                   #FFFFFFFF
-IN R4                   #FFFFF320
-MOV R3,R5               #R5= FFFFFFFF , flags no change
-ADD R1,R4               #R4= FFFFF325 , C-->0, N-->1, Z-->0
-SUB R5,R4               #R4= 00000CDA , C-->0, N-->0,Z-->0 
-AND R7,R4               #R4= 00000000 , C-->no change, N-->0, Z-->1
-OR R2, R1               #R1= 0000001D , C-->0, N-->0,Z-->0
-SHL R1,8                #R1= 000001D0 , C-->0, N-->0,Z-->0
-SHR R1,12                #R1= 0000001D , C-->0, N-->0,Z-->0
+.org 0
+JMPI 15
+ldm r1,15
+not r1
+inc r0
+shli r0,12
+shli r1,15
+shri r7,15
+shl r1,r0
+shr r2,r1
+pop r6
+push r5
+ldm r1,15
+.org 20
+std r1,r0 
+ldd R0,R2
+std R2,R3
+ldd R0,R3
+std R3,R4
+.org 30
+ldm r1,20
+ldm r1,20h
+ldm r1,20d
+ldm r1,1010b
+CALLI 01011b
+.org 40
+
+JMPI 15
