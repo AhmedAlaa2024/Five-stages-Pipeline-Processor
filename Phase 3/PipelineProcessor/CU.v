@@ -31,6 +31,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter JN_OP = 9'b100_000001;
 	parameter JC_OP = 9'b100_000010;
 	parameter JMP_OP = 9'b100_000100;
+	parameter JMPI_OP = 9'b100_000101;
 	parameter CALL_OP = 9'b100_000110;
 	parameter RET_OP = 9'b100_001000;
 	parameter RTI_OP = 9'b100_001010;
@@ -67,6 +68,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter JN_ALU = 4'b0100; // Edited move operand 1
 	parameter JC_ALU = 4'b0100; // Edited move operand 1
 	parameter JMP_ALU = 4'b0100; // Edited move operand 1
+	parameter JMPI_ALU = 9'b0011;
 	parameter CALL_ALU = 4'b0100;
 	parameter RET_ALU = 4'b0000;
 	parameter RTI_ALU = 4'b0000;
@@ -272,6 +274,11 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 			RTI_OP: begin
 				alu_function = RTI_ALU;
 				rti = 1;
+			end
+			JMPI_OP: begin
+				alu_function = JMPI_ALU;
+				branch = 1;
+				branch_type = 2'b11;
 			end
 		endcase
 	end		

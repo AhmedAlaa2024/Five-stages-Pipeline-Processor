@@ -32,6 +32,7 @@ module CU_tb;
 	parameter JN_OP = 9'b100_000001;
 	parameter JC_OP = 9'b100_000010;
 	parameter JMP_OP = 9'b100_000100;
+	parameter JMPI_OP = 9'b100_000101;
 	parameter CALL_OP = 9'b100_000110;
 	parameter RET_OP = 9'b100_001000;
 	parameter RTI_OP = 9'b100_001010;
@@ -68,6 +69,7 @@ module CU_tb;
 	parameter JN_ALU = 4'b0011; // Edited move operand 1
 	parameter JC_ALU = 4'b0011; // Edited move operand 1
 	parameter JMP_ALU = 4'b0011; // Edited move operand 1
+	parameter JMPI_ALU = 9'b0011;
 	parameter CALL_ALU = 4'b0100;
 	parameter RET_ALU = 4'b0000;
 	parameter RTI_ALU = 4'b0000;
@@ -922,6 +924,33 @@ module CU_tb;
 		end else 
 		begin
 			$display("FAILED SHR IM");	
+		end
+		// Test JMPI_OP
+		opcode = JMPI_OP;
+		#10;
+		if(
+		branch == 1 &&
+		data_read == 0 &&
+		data_write == 0 &&
+		DMR == 0&&
+		DMW == 0&&
+		IOE == 0&&
+		IOR == 0&&
+		IOW == 0&&
+		stack_operation == 0&&
+		push_pop == 0&&
+		pass_immediate == 0&&
+		write_sp == 0&&
+		alu_function == JMPI_ALU&&
+		call == 0&&
+		ret == 0&&
+		rti == 0&&
+		branch_type == 2'b11)
+		begin
+			$display("PASS JMPI IM");	
+		end else 
+		begin
+			$display("FAILED JMPI IM");	
 		end
 		$finish;	
 	end	
