@@ -63,10 +63,10 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter LDD_ALU = 4'b0011;
 	parameter STD_ALU = 4'b0011;
 
-	parameter JZ_ALU = 4'b0011; // Edited move operand 1
-	parameter JN_ALU = 4'b0011; // Edited move operand 1
-	parameter JC_ALU = 4'b0011; // Edited move operand 1
-	parameter JMP_ALU = 4'b0011; // Edited move operand 1
+	parameter JZ_ALU = 4'b0100; // Edited move operand 1
+	parameter JN_ALU = 4'b0100; // Edited move operand 1
+	parameter JC_ALU = 4'b0100; // Edited move operand 1
+	parameter JMP_ALU = 4'b0100; // Edited move operand 1
 	parameter CALL_ALU = 4'b0100;
 	parameter RET_ALU = 4'b0000;
 	parameter RTI_ALU = 4'b0000;
