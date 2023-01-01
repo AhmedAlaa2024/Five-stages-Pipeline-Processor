@@ -25,19 +25,19 @@ always @(*) begin
     end
     4'b0011: begin  // Move Operand 1
         result = op1;
-        outFlags[0] = 0;
-        if(op1 == 0) begin
-            outFlags[0] = 1;// Flags should be affected
-        end
-        outFlags[1] = op1[15];// Flags should be affected
+        //outFlags[0] = 0;
+        // if(op1 == 0) begin
+        //     outFlags[0] = 1;// Flags should be affected
+        // end
+        // outFlags[1] = op1[15];// Flags should be affected
     end
     4'b0100: begin  // Move Operand 2
         result = op2;
-        outFlags[0] = 0;
-        if(op2 == 0) begin
-            outFlags[0] = 1;// Flags should be affected
-        end
-        outFlags[1] = op2[15];// Flags should be affected
+        //outFlags[0] = 0;
+        // if(op2 == 0) begin
+        //     outFlags[0] = 1;// Flags should be affected
+        // end
+        // outFlags[1] = op2[15];// Flags should be affected
     end
     4'b0101: begin  // NOT operand 1
         result = ~ op1;
@@ -112,10 +112,11 @@ always @(*) begin
         end
         outFlags[1] = result[15];// Flags should be affected
     end
-    /*
-    4'b1101: // Addition
-        result = 16'b0;
-        flags = 16'b0;
+    
+    4'b1101: begin // Addition
+        result = {11'b0,inFlags};
+    end
+    /*    
     4'b1110: // Addition
         result = 16'b0;
         flags = 16'b0;

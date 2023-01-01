@@ -1,5 +1,5 @@
 
-module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function);
+module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation,push_pop,pass_immediate,write_sp,alu_function,rti,ret,call,branch_type);
 	//********* Start Opcodes of instructions ***********//
 	parameter NOP_OP = 9'b0;
 	parameter SETC_OP = 9'b1;
@@ -31,6 +31,7 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter JMP_OP = 9'b100_000100;
 	parameter CALL_OP = 9'b100_000110;
 	parameter RET_OP = 9'b100_001000;
+	parameter RTI_OP = 9'b100_001010;
 	//********* End Opcodes of instructions ***********//
 
 	//********* Start ALU functions of instructions ***********//
@@ -58,12 +59,13 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	parameter LDD_ALU = 4'b0011;
 	parameter STD_ALU = 4'b0011;
 
-	parameter JZ_ALU = 4'b0100;
+	parameter JZ_ALU = 4'b0011; // Edited move operand 1
 	parameter JN_ALU = 4'b0100;
 	parameter JC_ALU = 4'b0100;
 	parameter JMP_ALU = 4'b0100;
 	parameter CALL_ALU = 4'b0100;
 	parameter RET_ALU = 4'b0000;
+	parameter RTI_ALU = 4'b0000;
 	//********* End ALU functions of instructions ***********//
 	//,,,,,,,,,alu_function
 	input [8:0] opcode;
@@ -80,7 +82,10 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 	output reg pass_immediate;
 	output reg write_sp;
 	output reg [3:0] alu_function;
-	
+	output reg rti;
+	output reg ret;
+	output reg call;
+	output reg [1:0]branch_type;
 	always @(*) begin
 		// Avoid unwanted latches	
 		branch = 0;
@@ -96,6 +101,22 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 		pass_immediate = 0;
 		write_sp = 0;
 	 	alu_function = 0;
+		rti = 0;
+		ret = 0;
+		call = 0;
+		branch_type = 0;
+		if (int_flag == 1)
+			begin
+				/* ICU will take the control over them, so I drive floating signals on them, to drive them safely */
+				alu_function = 4'bz;
+				branch = 1'bz;
+				data_read = 1'bz;
+				data_write = 1'bz;
+				DMW = 1'bz;
+				stack_operation = 1'bz;
+				push_pop = 1'bz;
+				write_sp = 1'bz;
+			end
 		case(opcode)
 			NOP_OP: begin
 				alu_function = NOP_ALU;
@@ -204,28 +225,41 @@ module CU(opcode,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_operation
 				alu_function = JZ_ALU;
 				branch = 1;
 				data_read = 1;
+				branch_type = 2'b00;
 			end 
  			JN_OP: begin
 				alu_function = JN_ALU;
 				branch = 1;
 				data_read = 1;
+				branch_type = 2'b01;
 			end
 			JC_OP: begin
 				alu_function = JC_ALU;
 				branch = 1;
 				data_read = 1;
+				branch_type = 2'b10;
 			end 
 			JMP_OP: begin
 				alu_function = JMP_ALU;
 				branch = 1;
+				branch_type = 2'b11;
 			end
  			CALL_OP: begin
 				alu_function = CALL_ALU;
-				branch = 1;
+				call = 1;
 			end 
 			RET_OP: begin
 				alu_function = RET_ALU;
+				ret = 1;
+			end
+			RTI_OP: begin
+				alu_function = RTI_ALU;
+				rti = 1;
 				branch = 1;
+				data_write = 1;
+				DMR = 1;
+				stack_operation = 1;
+				write_sp = 1;
 			end
 		endcase
 	end		

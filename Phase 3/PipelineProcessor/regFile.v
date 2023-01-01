@@ -28,7 +28,7 @@ integer i;
 always @ (negedge clk)begin
 	//write in the posedge
 	if(rst != 0)begin
-		CCR=write_ccr;
+		//CCR=write_ccr;
 		if(en) begin
 		// {general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]}-1;
 		end 
@@ -47,7 +47,7 @@ always @ (negedge clk)begin
 		// general_regester[REG_NUMBER] = 0;
 		//general_regester[REG_NUMBER] = 32;
 		// general_regester[REG_NUMBER+1] = 0;
-		CCR = 0;
+		//CCR = 0;
 	end 
 	else if(Data_write1 == 1'b1 )begin 
 		general_regester[write_addr1]= write_data1;
@@ -63,6 +63,7 @@ always @(posedge clk) begin
 		// general_regester[REG_NUMBER] = write_pc_data[15:0];
 		// general_regester[REG_NUMBER+1] = write_pc_data[31:16];
 		//SP = 4095;
+		CCR=write_ccr;
 		if(en) begin
 			{general_regester[REG_NUMBER+1],general_regester[REG_NUMBER] }= {write_pc_data[31:16],write_pc_data[15:0]};
 		end 
@@ -74,7 +75,7 @@ always @(posedge clk) begin
 	if (rst == 0) begin
 		general_regester[REG_NUMBER] = 0;
 		general_regester[REG_NUMBER+1] = 0;
-		//CCR = 0;
+		CCR = 0;
 		// if( sp_write == 1 && rst != 0)begin
 		// 	SP=write_sp_data;
 		// end
