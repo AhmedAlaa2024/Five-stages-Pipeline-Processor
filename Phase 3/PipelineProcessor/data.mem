@@ -1,11 +1,11 @@
 // memory data file (do not edit the following line - required for mem load use)
-// instance=/Processor_tb/processor/DM/cache
+// instance=/Fabonacci_Processor_tb/processor/DM/cache
 // format=mti addressradix=d dataradix=u version=1.0 wordsperline=1
 4095:     0
-4094:    35
+4094:     0
 4093:     0
 4092:     0
-4091:     2
+4091:     0
 4090:     0
 4089:     0
 4088:     0
@@ -3856,7 +3856,7 @@
  243:     0
  242:     0
  241:     0
- 240:     0
+ 240:     z
  239:     0
  238:     0
  237:     0
@@ -4096,4 +4096,4 @@
    3:     0
    2:     0
    1:     0
-   0:     0
+   0:     5
