@@ -1,0 +1,17 @@
+.org 0
+NOP
+NOP
+dec r0
+inc r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+jmpi 100
+.org 20
+inc r0
+inc r0
+jmpi 3

@@ -1,56 +1,17 @@
-# jum jn jz
 .org 0
 NOP
 NOP
-inc r4
-inc r4
-inc r4
-inc r4
-add r2,r4 # r4 =6
-shli r4,1 #r4=12
-mov r4,r5 #r5=12
-add r5,r5 #r5=24
-add r4,r5 #r5=36
-add r2,r5 #r5=38
-add r0,r5 #r5=39
-jmp r5
-#14
-add r5,r4 
-add r5,r4
-jmp r5
+dec r0
+inc r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+add r1,r1
+jmpi 100
 .org 20
 inc r0
-inc r2
-add r0,r2 # r2=2
-add r2,r3 #r3=2
-dec r3  #r3=1
-dec r3  #r3=0
-jz r2
-#39
-add r2,r6
-add r2,r6
-add r2,r6
-add r2,r6
-add r2,r6
-add r2,r6
-add r2,r6 #r6=14 28
-
-inc r6
-sub r2,r4   #r4=10 
-sub r5,r4   #r4=-29
-out r6
-nop
-nop
-nop
-nop
-jn r6
-
-#65507
-#r0 = 1
-#r1 = 0
-#r2 = 2
-#r3 = 0
-#r4 = 8
-#r5 = 39
-#r6 = 30
-#r7 = 0
+inc r0
+jmpi 3
