@@ -1,45 +1,20 @@
 # ISR TO SHOW THE RESULT OF FIBONACII ON PORTOUT
 .ORG 0
-OR R3, R3
-IN R2				    # PUT ON PORTIN 04H
-JZ R2
-LDD R3, R1
-OUT R1                      # NOW THE RESULT ON PORTOUT
-L2:
-MOV R1,R3
-DEC R1
-OUT R1                      # IF THE OUTPUT IS NOT READY, IT WILL OUT 0FFH
+AND R3,R4
+ADD R1,R4
+OUT R4                     # IF THE OUTPUT IS NOT READY, IT WILL OUT 0FFH
 RTI
 
 .ORG 20
 # int Fabonaaci(int N)
-IN R3                       # PUT ON PORTIN 00H
-MOV R3, R2
-MOV R3, R0                  # R0 WILL ACT AS AL IN x86
-IN R7                       # PUT ON PORTIN 50H, R7 WILL ACT AS SI IN x86
-STD R0, R7          
-INC R7
-INC R0
-STD R0, R7
-LDD R3, R5                  # PUT THE (N) AT 00H, R5 WILL ACT AS CX IN X86
-DEC R5
-DEC R5
-IN R2				    # PUT ON PORTIN 2DH
-
-L1:
-MOV R7, R6
-DEC R6
-LDD R6, R0
-LDD R7, R4
-ADD R4, R0
-INC R7
-STD R0, R7
-DEC R5
-JZ R2
-DEC R3
-STD R0, R3
-
-IN R2				    # PUT ON PORTIN 3AH
-
-HLT_LOOP:
-JMP R2
+IN R1                   #add 000000040 in R1
+not r5
+inc r5
+jc r1
+NOP
+NOP 
+NOP
+not r6
+not r6 
+not r6
+ 
