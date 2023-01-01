@@ -279,6 +279,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 				alu_function = JMPI_ALU;
 				branch = 1;
 				branch_type = 2'b11;
+				pass_immediate = 1;
 			end
 		endcase
 	end		
