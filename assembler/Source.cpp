@@ -14,11 +14,6 @@ unordered_map<string, vector<string>> instructions;
 unordered_map<string, string>labels;
 string hexa_index[] = { "0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F" };
 vector<string> memory(1 << 20, "0000000000000000");
-/// <summary>
-/// 
-/// </summary>
-/// <param name="input"></param>
-/// <returns></returns>
 string to_lower(string input);
 void prepare_resesters();
 void prepare_opcode(ifstream& InputFile);
@@ -34,14 +29,13 @@ string convert_to_hexa(long long num, int size = 8);
 int main(int argc, char* argv[]) {
 	ofstream MemFile("memory_test.mem");
 	ifstream InputFile("ISA.txt");
-	/*ifstream Inst(argv[1]);
-	ifstream Inst_lables(argv[1]);*/
-	ifstream Inst("ex1.txt");
-	ifstream Inst_lables("ex1.txt");
+	ifstream Inst(argv[1]);
+	ifstream Inst_lables(argv[1]);
+	/*ifstream Inst("ex1.txt");
+	ifstream Inst_lables("ex1.txt");*/
 	prepare_resesters();
 	prepare_opcode(InputFile);
 	prepare_lables(Inst_lables);
-	//fill_interrupt(MemFile);
 	fill_inst_memory(Inst, MemFile);
 
 	// Close the file
@@ -125,11 +119,13 @@ vector<string> translate_line(string line) {
 	vector<string> translated_line = vector<string>(0);
 	string instruction_line = "";
 	if (splited_line.size() == 0)
-		return vector<string>(0);
-	if ((instructions.find(splited_line[0]) == instructions.end()) && (splited_line[1] == ":"))
-	{
-		splited_line.erase(splited_line.begin());
-		splited_line.erase(splited_line.begin());
+		return translated_line;
+
+	for (int i = 0; i < splited_line.size(); i++) {
+		if (splited_line[i] == ":") {
+			splited_line.erase(splited_line.begin() + i);
+			if (i)splited_line.erase(splited_line.begin() + i);
+		}
 	}
 	if (instructions.find(splited_line[0]) != instructions.end())
 	{
@@ -140,10 +136,10 @@ vector<string> translate_line(string line) {
 			if (splited_line[0].compare("jmpi") == 0 || splited_line[0].compare("calli") == 0) {
 
 				translated_line.push_back(instruction_line + "0000000");
-				translated_line.push_back(convert_to_binary(stoi(labels[splited_line[1]]), 16));
+				translated_line.push_back(convert_to_binary(stoi(splited_line[1]), 16));
 			}
 			else {
-				translated_line.push_back(instruction_line + "0000" + regesters[splited_line[1]]);
+				translated_line.push_back(instruction_line + regesters[splited_line[1]] + "0" + regesters[splited_line[1]]);
 			}
 		}
 		else {
@@ -154,48 +150,82 @@ vector<string> translate_line(string line) {
 				instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
 
 			}
-			/*else if (inst[1] == "0" && inst[2] == "1" && inst[3] == "0")
-			{
-				instruction_line += (regesters[splited_line[1]]);
-			}*/
 			else
 			{
 				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
 				instruction_line += "0";
 				instruction_line += (inst[2] == "1") ? regesters[splited_line[1]] : "000";
-
-				//instruction_line += "000";
 			}
-			/*instruction_line += "0";
-			instruction_line += (inst[2] == "1") ? (splited_line.size() > 2 ? regesters[splited_line[2]] : regesters[splited_line[1]]) : "000";
-			*/
 			translated_line.push_back(instruction_line);
 			if (inst[3] == "1")
 			{
-				translated_line.push_back(convert_to_binary(stoi(splited_line.size() == 3 ? splited_line[2] : splited_line[1]), 16));
+				string memory_value = splited_line.size() == 3 ? splited_line[2] : splited_line[1];
+				char last_char = (memory_value.length() > 0) ? memory_value[memory_value.length() - 1] : 'h';
+				if (last_char >= '0' && last_char <= '9')
+					last_char = 'd';
+				else if (last_char != 'd' && last_char != 'h' && last_char != 'b')
+				{
+					last_char = 'd';
+					cout << "the imadiade value must be h or b or d only (the default is d)";
+					throw ("the imadiade value must be h or b or d only (the default is d)");
+				}
+				if (last_char == 'h')
+					translated_line.push_back(convert_to_binary(stoi(memory_value, 0, 16), 16));
+
+				else if (last_char == 'd')
+					translated_line.push_back(convert_to_binary(stoi(memory_value, 0, 10), 16));
+
+				else if (last_char == 'b')
+					translated_line.push_back(convert_to_binary(stoi(memory_value, 0, 2), 16));
+
 			}
 		}
 	}
 	else if (splited_line[0] == ".org") {
-		////int new_index = htoi(splited_line[1]);
-		cout << stoi(splited_line[1], 0, 16);
-		index = stoi(splited_line[1], 0, 16);
+		string memory_value = splited_line[1];
+		char last_char = (memory_value.length() > 0) ? memory_value[memory_value.length() - 1] : 'h';
+		if (last_char >= '0' && last_char <= '9')
+			last_char = 'h';
+		else if (last_char != 'd' && last_char != 'h' && last_char != 'b')
+		{
+			last_char = 'h';
+			cout << "the imadiade value must be h or b or d only (the default is d)";
+			throw ("the imadiade value must be h or b or d only (the default is h)");
+		}
+
+		if (last_char == 'h')
+			index = stoi(memory_value, 0, 16);
+
+		else if (last_char == 'd')
+			index = stoi(memory_value, 0, 16);
+
+		else if (last_char == 'b')
+			index = stoi(memory_value, 0, 16);
 	}
 	return translated_line;
-
 }
 void prepare_lables(ifstream& Inst) {
 	string line;
-	long long index = (long long)(1 << 5);
+	index = 0;
 	while (getline(Inst, line)) {
 		if (line.empty())continue;
 		line = to_lower(line);
 		vector<string> splited_line = split_line(line);
+		for (long long i = 0; i < splited_line.size(); i++) {
+			if (splited_line[i] == ".org" && splited_line.size() > i + 1) {
+				index = stoi(splited_line[i + 1], 0, 16);
+				splited_line.erase(splited_line.begin() + i);
+				splited_line.erase(splited_line.begin() + i);
+
+			}
+		}
 		if (splited_line.size() > 0 && (instructions.find(splited_line[0]) == instructions.end()) && (splited_line[1] == ":"))
 		{
 			labels.insert({ splited_line[0] ,to_string(index) });
+			splited_line.erase(splited_line.begin());
+			splited_line.erase(splited_line.begin());
 		}
-		else if (splited_line.size() > 0)
+		if (splited_line.size() > 0)
 			index += 1;
 	}
 }
@@ -203,44 +233,30 @@ void fill_interrupt(ofstream& MemFile) {
 	long long size = (long long)(1 << 5);
 	while (index < size)
 	{
-		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;
 		memory[index] = "0000000000000000";
-
 		index += 1;
 	}
 }
 void fill_inst_memory(ifstream& Inst, ofstream& MemFile) {
+	index = 0;
 	string line;
 	while (getline(Inst, line)) {
 		line = to_lower(line);
 		vector<string> out = translate_line(line);
 		for (int i = 0; i < out.size(); i++) {
-			//MemFile << translate_line_index(index) + ":\t\t" + out[i] << endl;
 			memory[index] = out[i];
 			index += 1;
 		}
 	}
-	long long size = (long long)(1 << 20);
-	//long long size = 200;
-	string end_line = "";
-	long long max = end_line.max_size();
-	while (index < size)
-	{
-		//MemFile << translate_line_index(index) + ":\t\t" + "0000000000000000" << endl;;
-		memory[index] = "0000000000000000";
-		index += 1;
-	}
+	long long size = memory.size();
 	MemFile << "// memory data file (do not edit the following line - required for mem load use)\n" <<
 		"// instance=/Processor_tb/processor/InstrCache/cache\n" <<
 		"// format=mti addressradix=h dataradix=b version=1.0 wordsperline=1\n";
-	for (int i = ((1 << 20) - 1); i > 0; i--)
+	for (int i = size - 1; i >= 0; i--)
 	{
 		MemFile << translate_line_index(i) + ":\t\t" << memory[i] << endl;
 
 	}
-
-	MemFile << translate_line_index(0) + ":\t\t" << memory[0];
-
 }
 string translate_line_index(long long index) {
 	return convert_to_hexa(index);
@@ -260,7 +276,6 @@ string convert_to_binary(long long num, int size) {
 	}
 	return binary_num;
 }
-
 string convert_to_hexa(long long num, int size) {
 	string binary_num = convert_to_binary(num);
 	string hexa_num = "";
