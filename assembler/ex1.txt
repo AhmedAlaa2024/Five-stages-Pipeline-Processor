@@ -1,41 +1,56 @@
-# ISR TO SHOW THE RESULT OF FIBONACII ON PORTOUT
-.ORG 0
-IN R2				    # PUT ON PORTIN 05H
-OR R3, R3
-JZ R2
-LDD R3, R1
-OUT R1                      # NOW THE RESULT ON PORTOUT
-L1:
-MOV R1,R3
-DEC R1
-OUT R1                      # IF THE OUTPUT IS NOT READY, IT WILL OUT 0FFH
-RTI
+# jum jn jz
+.org 0
+NOP
+NOP
+inc r4
+inc r4
+inc r4
+inc r4
+add r2,r4 # r4 =6
+shli r4,1 #r4=12
+mov r4,r5 #r5=12
+add r5,r5 #r5=24
+add r4,r5 #r5=36
+add r2,r5 #r5=38
+add r0,r5 #r5=39
+jmp r5
+#14
+add r5,r4 
+add r5,r4
+jmp r5
+.org 20
+inc r0
+inc r2
+add r0,r2 # r2=2
+add r2,r3 #r3=2
+dec r3  #r3=1
+dec r3  #r3=0
+jz r2
+#39
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6 #r6=14 28
 
-.ORG 20
-# int Fabonaaci(int N)
-IN R1                       # PUT ON PORTIN 36H
-IN R7                       # PUT ON PORTIN 50H, R7 WILL ACT AS SI IN x86
-IN R2				    # PUT ON PORTIN 2BH
+inc r6
+sub r2,r4   #r4=10 
+sub r5,r4   #r4=-29
+out r6
+nop
+nop
+nop
+nop
+jn r6
 
-STD R0, R7                  # R0 WILL ACT AS AL IN x86          
-INC R7
-INC R0
-STD R0, R7
-LDD R3, R5                  # PUT THE (N) AT 00H, R5 WILL ACT AS CX IN X86
-DEC R5
-DEC R5
-
-L2:
-MOV R7, R6
-DEC R6
-LDD R6, R0
-LDD R7, R4
-ADD R4, R0
-INC R7
-STD R0, R7
-DEC R5
-JN R2
-DEC R3
-STD R0, R3			    
-
-OUT R0
+#65507
+#r0 = 1
+#r1 = 0
+#r2 = 2
+#r3 = 0
+#r4 = 8
+#r5 = 39
+#r6 = 30
+#r7 = 0
