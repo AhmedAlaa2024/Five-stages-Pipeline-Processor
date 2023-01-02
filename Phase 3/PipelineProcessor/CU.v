@@ -10,7 +10,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter DEC_OP = 9'b001_000010;
 	parameter OUT_OP = 9'b001_000011;
 	parameter IN_OP = 9'b001_000100;
-	
+
 	parameter MOV_OP = 9'b010_000000;
 	parameter ADD_OP = 9'b010_000001;
 	parameter SUB_OP = 9'b010_000010;
@@ -20,6 +20,11 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter SHR_OP = 9'b010_000110;
 	parameter SHL_IMM_OP = 9'b010_000111;
 	parameter SHR_IMM_OP = 9'b010_001000;
+	parameter MOVI_OP = 9'b010_001001;
+	parameter ADDI_OP = 9'b010_001010;
+	parameter SUBI_OP = 9'b010_001011;
+	parameter ANDI_OP = 9'b010_001100;
+	parameter ORI_OP = 9'b010_001101;
 
 	parameter PUSH_OP = 9'b011_000000;
 	parameter POP_OP = 9'b011_000001;
@@ -47,7 +52,7 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter DEC_ALU = 4'b0111;
 	parameter OUT_ALU = 4'b0011; // Edited move operand 1
 	parameter IN_ALU = 4'b0000;
-	
+
 	parameter MOV_ALU = 4'b0011;
 	parameter ADD_ALU = 4'b1000;
 	parameter SUB_ALU = 4'b1001;
@@ -57,6 +62,11 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 	parameter SHR_ALU = 4'b1101;
 	parameter SHL_IMM_ALU = 4'b1100;
 	parameter SHR_IMM_ALU = 4'b1101;
+	parameter MOVI_ALU = 4'b0011;
+	parameter ADDI_ALU = 4'b1000;
+	parameter SUBI_ALU = 4'b1001;
+	parameter ANDI_ALU = 4'b1010;
+	parameter ORI_ALU = 4'b1011;
 
 	parameter PUSH_ALU = 4'b0100; // Edited ,should be operand2 0100
 	parameter POP_ALU = 4'b0000;
@@ -279,6 +289,36 @@ module CU(opcode,int_flag,branch,data_read,data_write,DMR,DMW,IOE,IOR,IOW,stack_
 				alu_function = JMPI_ALU;
 				branch = 1;
 				branch_type = 2'b11;
+				pass_immediate = 1;
+			end
+			MOVI_OP: begin
+				alu_function = MOVI_ALU;
+				data_read = 1;
+				data_write = 1;
+				pass_immediate = 1;
+			end
+			ADDI_OP: begin
+				alu_function = ADDI_ALU;
+				data_read = 1;
+				data_write = 1;
+				pass_immediate = 1;
+			end
+			SUBI_OP: begin
+				alu_function = SUBI_ALU;
+				data_read = 1;
+				data_write = 1;
+				pass_immediate = 1;
+			end
+			ANDI_OP: begin
+				alu_function = ANDI_ALU;
+				data_read = 1;
+				data_write = 1;
+				pass_immediate = 1;
+			end
+ 			ORI_OP: begin
+				alu_function = ORI_ALU;
+				data_read = 1;
+				data_write = 1;
 				pass_immediate = 1;
 			end
 		endcase

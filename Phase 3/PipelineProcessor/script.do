@@ -11,6 +11,7 @@ add wave -position end sim:/Processor_tb/processor/*
 
 
 mem load -i {D:\Material\3rd CMP\First term\Computer arch\Project\processor\memory_test.mem} /Processor_tb/processor/InstrCache/cache
+mem load -i {D:\Material\3rd CMP\First term\Computer arch\Project\processor\test_data_memory.mem} /Processor_tb/processor/DM/cache
 
 run
 

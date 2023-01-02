@@ -73,7 +73,7 @@ always @(*) begin
     end
     4'b1001: begin  // SUB (need to check overflow flag)
         result = 16'b0;
-        {outFlags[2] ,result} = op1 - op2 ; 
+        {outFlags[2] ,result} = op2 - op1 ; 
         outFlags[0] = 0;
         if(result == 0) begin
             outFlags[0] = 1;// Flags should be affected
