@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 	ifstream InputFile("ISA.txt");
 	ifstream Inst(argv[1]);
 	ifstream Inst_lables(argv[1]);
-	/*ifstream Inst("ex1.txt");
-	ifstream Inst_lables("ex1.txt");*/
+	//ifstream Inst("ex7.txt");
+	//ifstream Inst_lables("ex7.txt");
 	prepare_resesters();
 	prepare_opcode(InputFile);
 	prepare_lables(Inst_lables);
