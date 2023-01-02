@@ -1,17 +1,49 @@
+# jum jn jz
 .org 0
-inc r2
-inc r2
-inc r2
-inc r2
-inc r2
-inc r2
-rti
+NOP
+NOP
+inc r4
+inc r4
+inc r4
+inc r4
+add r2,r4 # r4 =6
+shl r4,1 #r4=12
+mov r4,r5 #r5=12
+add r5,r5 #r5=24
+add r4,r5 #r5=36
+add r2,r5 #r5=38
+add r0,r5 #r5=39
+jmp r5
+#15
+add r5,r4
+add r5,r4
+jmp r5
 .org 20
-inc r1
-inc r1
-inc r1
-inc r1
-inc r1
-inc r1
-inc r3
-inc r3
+inc r0
+inc r2
+add r0,r2 # r2=2
+add r2,r3 #r3=2
+dec r3  #r3=1
+dec r3  #r3=0
+jz r2
+#39
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6
+add r2,r6 
+inc r6 #r6=15 30
+sub r2,r4   #r4=10 
+sub r5,r4   #r4=-29
+jn r6
+
+#r0 = 1
+#r1 = 0
+#r2 = 2
+#r3 = 0
+#r4 = 8
+#r5 = 39
+#r6 = 30
+#r7 = 0

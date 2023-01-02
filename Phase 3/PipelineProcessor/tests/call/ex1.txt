@@ -1,0 +1,33 @@
+# call  ret 
+.org 0
+NOP
+NOP
+NOP 
+NOP
+NOP 
+#5
+inc r3 #r3=1
+inc r4  #r4=1
+addi r4,14d #r4=15
+andi r4,1100b #r4=12
+ori r5,11111b #r5=31
+RET 
+.org 20
+Movi r0,15  #r0=15
+addi r1,10  ##r1=10
+add r1,r2   #r2=10
+subi r2,5   ##r2=5
+nop
+nop
+call r2
+inc r7
+shl r7,2 #r7=4
+
+#r0 = 15
+#r1 = 10
+#r2 = 5
+#r3 = 1
+#r4 = 12
+#r5 = 31
+#r6 = 0
+#r7 = 4

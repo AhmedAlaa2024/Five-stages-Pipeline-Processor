@@ -3,6 +3,7 @@ module call_fsm(reset,call,clk,rdst_value,out,pc,stall,change_pc_call);
 parameter PUSH_PC_LOW = 2'b00;
 parameter PUSH_PC_HIGH = 2'b01;
 parameter CHANGE_PC_CALL = 2'b10;
+parameter STALL = 2'b11;
 
 parameter PUSH_PC_LOW_OP = 16'b0110000000001000;
 parameter PUSH_PC_HIGH_OP = 16'b0110000000001001;
@@ -38,12 +39,14 @@ always @(posedge clk) begin
 		stall = 1;
 		change_pc_call = 0;
 	end
-
+	rdst_reg = rdst_value;
 	case (current_state)
 		PUSH_PC_LOW: 
 			out = PUSH_PC_LOW_OP;
 		PUSH_PC_HIGH:
 			out = PUSH_PC_HIGH_OP;
+		STALL:
+			out = 16'b0;
 		CHANGE_PC_CALL: begin
 			change_pc_call = 1'b1;
 			out = 16'b0;
@@ -61,6 +64,8 @@ always @(current_state)begin
 			change_pc_call = 0;
 		end
 		PUSH_PC_HIGH:
+			next_state = STALL;
+		STALL: 
 			next_state = CHANGE_PC_CALL;
 		CHANGE_PC_CALL:
 			next_state = PUSH_PC_LOW;
