@@ -25,11 +25,11 @@ A RISC-like, five-stages pipeline processor implemented using Verilog ,It is bas
 
 ### Non Pipelined
 
-![Non Pipelined](Images/nonpiplined.png)
+![Pipelined](Images/pipelined.png)
 
 ### Pipelined
 
-![Pipelined](Images/pipelined.png)
+![Non Pipelined](Images/nonpiplined.png)
 
 ## ISA
 
