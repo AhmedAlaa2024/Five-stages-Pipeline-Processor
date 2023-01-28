@@ -5,13 +5,13 @@
 
 ## 📝 Table of Contents
 
-- [About](#about)
-- [Built With](#built-with)
+- [About](#About)
+- [Built With](#Built-With)
 - [Design](#Design)
 - [ISA](#ISA)
-- [Signals](#Signals)
-- [Contributors](#contributors)
-- [License](#license)
+- [Input signals](#Input-signals)
+- [Contributors](#Contributors)
+- [License](#License)
 
 # 📑 About
 
